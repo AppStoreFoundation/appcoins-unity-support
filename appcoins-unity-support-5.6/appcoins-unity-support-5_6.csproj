@@ -22,13 +22,13 @@
       <CustomCommands>
         <Command>
           <type>AfterBuild</type>
-          <command>chmod +x ./Scripts/Bash/Unity5_6.sh</command>
+          <command>chmod +x ./Scripts/Bash/run_command_5_6.sh</command>
           <workingdir>${SolutionDir}</workingdir>
           <externalConsole>True</externalConsole>
         </Command>
         <Command>
           <type>AfterBuild</type>
-          <command>./Scripts/Bash/Unity5_6.sh</command>
+          <command>./Scripts/Bash/run_command_5_6.sh</command>
           <workingdir>${SolutionDir}</workingdir>
           <externalConsole>True</externalConsole>
         </Command>

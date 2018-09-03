@@ -8,7 +8,7 @@ using UnityEngine.Events;
 public abstract class CustomBuildWindow : EditorWindow
 {
     protected static CustomBuildWindow instance;
-    protected CustomBuildWindow innerInstance;
+    internal CustomBuildWindow innerInstance;
     public Vector2 scrollViewVector = Vector2.zero;
 
     protected internal BuildStage stage;
@@ -53,26 +53,35 @@ public abstract class CustomBuildWindow : EditorWindow
 
     void OnGUI()
     {
-        switch (instance.stage)
+        if (instance != null)
         {
-            case BuildStage.IDLE:
-                instance.innerInstance.IdleGUI();
-                break;
-            case BuildStage.UNITY_EXPORT:
-                instance.innerInstance.UnityExportGUI();
-                break;
-            case BuildStage.PROJECT_BUILD:
-                instance.innerInstance.ProjectBuildGUI();
-                break;
-            case BuildStage.PROJECT_INSTALL:
-                instance.innerInstance.ProjectInstallGUI();
-                break;
-            case BuildStage.PROJECT_RUN:
-                instance.innerInstance.ProjectRunGUI();
-                break;
-            case BuildStage.DONE:
-                Close();
-                break;
+            switch (instance.stage)
+            {
+                case BuildStage.IDLE:
+                    instance.innerInstance.IdleGUI();
+                    break;
+                case BuildStage.UNITY_EXPORT:
+                    instance.innerInstance.UnityExportGUI();
+                    break;
+                case BuildStage.PROJECT_BUILD:
+                    instance.innerInstance.ProjectBuildGUI();
+                    break;
+                case BuildStage.PROJECT_INSTALL:
+                    instance.innerInstance.ProjectInstallGUI();
+                    break;
+                case BuildStage.PROJECT_RUN:
+                    instance.innerInstance.ProjectRunGUI();
+                    break;
+                case BuildStage.DONE:
+                    Close();
+                    break;
+            }
+        }
+
+        else
+        {
+            GUI.Label(new Rect(5, 5, 590, 50), "Unity just update...\nPlease" +
+                      " close this window and restart Custom Build process...");
         }
     }
 

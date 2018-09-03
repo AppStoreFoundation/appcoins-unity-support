@@ -139,14 +139,14 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         if (GUI.Button(new Rect(115, 470, 120, 20), "Add Open Scenes"))
         {
-            selector.AddAllOpenScenesToBuildSettings();
-            selector.buildScenesEnabled = 
-                selector.GetBuildSettingsScenesEnabled();
+            instance.selector.AddAllOpenScenesToBuildSettings();
+            instance.selector.buildScenesEnabled = 
+                instance.selector.GetBuildSettingsScenesEnabled();
         }
 
         if (GUI.Button(new Rect(460, 470, 60, 20), "Cancel"))
         {
-            this.Close();
+            instance.Close();
         }
 
         if (gradlePath != "" &&

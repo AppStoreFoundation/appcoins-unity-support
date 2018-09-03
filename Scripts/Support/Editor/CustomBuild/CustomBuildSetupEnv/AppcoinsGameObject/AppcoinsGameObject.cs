@@ -11,5 +11,5 @@ public abstract class AppcoinsGameObject
     protected const string toReplace = "{0}";
     protected const int numTimes = 2;
 
-    internal abstract void CheckAppcoinsGameobject();
+    public abstract void CheckAppcoinsGameobject();
 }

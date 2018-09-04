@@ -47,9 +47,9 @@ public class CustomBuildErrorWindow : EditorWindow
     void OnGUI()
     {
         EditorWindow.FocusWindowIfItsOpen(typeof(CustomBuildErrorWindow));
-        BuildStage[] allStages = {BuildStage.UNITY_EXPORT,
-            BuildStage.PROJECT_BUILD, BuildStage.PROJECT_INSTALL,
-            BuildStage.PROJECT_RUN
+        BuildStage[] allStages = {BuildStage.SETUP_ENV, BuildStage.IDLE,
+            BuildStage.UNITY_EXPORT, BuildStage.PROJECT_BUILD, 
+            BuildStage.PROJECT_INSTALL, BuildStage.PROJECT_RUN
         };
 
         LoadErrorEditorPrefbs(allStages);
@@ -142,18 +142,20 @@ public class CustomBuildErrorWindow : EditorWindow
                 {
                     GUI.contentColor = Color.red;
                 }
-                GUI.Label(new Rect(5, height, 590, 20), errorTitles[i] + " " + resultString);
+                GUI.Label(new Rect(5, height, 590, 20), errorTitles[i] + " " + 
+                          resultString);
+
                 GUI.contentColor = Color.black;
+
             } else {
                 GUI.Label(new Rect(5, height, 590, 20), errorTitles[i]);
             }
                 
-            
             height += 40;
             i++;
         }
 
-        GUI.Label(new Rect(10, height, 580, height + 100), "Error:\n" + 
+        GUI.Label(new Rect(10, height, 580, height + 50), "Error:\n" + 
                   errorMessage, GUI.skin.textArea);
 
         if (GUI.Button(new Rect(530, 470, 60, 20), "Got it"))
@@ -165,6 +167,8 @@ public class CustomBuildErrorWindow : EditorWindow
     protected void LoadErrorEditorPrefbs(BuildStage[] allStages)
     {
         string[] genericErrorTitles = {
+            "Setup Android Enviornment: ",
+            "(GUI) Chose Custom Build Process: ",
             "Export Unity Project: ",
             "Build Exported Project: ",
             "Install .apk to device: ",

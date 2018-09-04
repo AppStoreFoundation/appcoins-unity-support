@@ -1,3 +1,7 @@
+using UnityEngine;
+
+using System;
+
 public abstract class CustomBuildSetupEnv
 {
     AppcoinsGameObject appcoinsGameObject;
@@ -9,6 +13,14 @@ public abstract class CustomBuildSetupEnv
 
     internal virtual void Setup()
     {
-        appcoinsGameObject.CheckAppcoinsGameobject();
+        try
+        {
+            appcoinsGameObject.CheckAppcoinsGameobject();
+        }
+
+        catch (Exception e)
+        {
+            throw e;
+        }
     }
 }

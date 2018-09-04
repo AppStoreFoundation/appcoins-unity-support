@@ -3,6 +3,8 @@ using UnityEditor;
 public class CustomBuildAndroidErrorTitles : CustomBuildErrorTitles
 {
     private string[] customErrorTitles = {
+        "Setup Android Enviornment: ",
+        "(GUI) Chose Custom Build Process: ",
         "Export Unity Project: ",
         "(GRADLE) Build Exported Project: ",
         "(ADB) Install .apk to device: ",

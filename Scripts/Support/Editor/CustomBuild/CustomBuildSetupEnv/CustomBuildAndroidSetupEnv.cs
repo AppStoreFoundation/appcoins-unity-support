@@ -1,4 +1,7 @@
 using UnityEditor;
+using UnityEngine;
+
+using System;
 
 public class CustomBuildAndroidSetupEnv : CustomBuildSetupEnv
 {
@@ -8,7 +11,15 @@ public class CustomBuildAndroidSetupEnv : CustomBuildSetupEnv
 
     internal override void Setup()
     {
-        base.Setup();
+        try
+        {
+            base.Setup();
+        }
+
+        catch (Exception e)
+        {
+            throw e;
+        }
 
         // Check if the active platform is Android. If it isn't change it
         if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)

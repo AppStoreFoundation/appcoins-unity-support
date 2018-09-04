@@ -6,7 +6,7 @@
     <ProjectGuid>{4B5942C1-3222-4368-885C-85803EF9DCA3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>unityeditor5</RootNamespace>
-    <AssemblyName>appcoins-unity-support-5_6</AssemblyName>
+    <AssemblyName>AppcoinsUnitySupport5_6</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

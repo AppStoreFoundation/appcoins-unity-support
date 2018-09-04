@@ -48,23 +48,39 @@ public class CustomBuild
     public virtual void RunProcess()
     {
         // Phase 1: Setup Enviornment
-        StateSetupEnv();
-        customBuildSetup.Setup();
+        try
+        {
+            StateSetupEnv();
+            customBuildSetup.Setup();
+        }
+        catch (Exception e)
+        {
+            HandleExceptions(e);
+            return;
+        }
 
         // Phase 2: GUI (Chose custom build process)
-        StateBuildIdle();
-        CustomBuildWindow.CreateCustomBuildWindow(stage,
-                                                  customBuildWindow, 
-                                                  scenesSelector,
-                                                  idleClosed
-                                                 );
-        idleClosed.AddListener(
-            delegate
+        try
+        {
+            StateBuildIdle();
+            CustomBuildWindow.CreateCustomBuildWindow(stage,
+                                                      customBuildWindow, 
+                                                      scenesSelector,
+                                                      idleClosed
+                                                     );
+            idleClosed.AddListener(
+                delegate
             {
                 scenesPath = scenesSelector.ScenesToString();
                 RunInstalationProcess();
             }
-        );
+            );
+        }
+        catch (Exception e)
+        {
+            HandleExceptions(e);
+            return;
+        }
     }
 
     public virtual void RunInstalationProcess()
@@ -135,7 +151,7 @@ public class CustomBuild
 
     private void HandleExceptions(Exception e)
     {
-        EditorPrefs.SetInt("appcoins_error_stage", (int)stage);
+        EditorPrefs.SetInt("appcoins_error_stage", (int) stage);
         EditorPrefs.SetString("appcoins_error_message", e.Message);
         CustomBuildErrorWindow.CreateCustomBuildErrorWindow();
     }

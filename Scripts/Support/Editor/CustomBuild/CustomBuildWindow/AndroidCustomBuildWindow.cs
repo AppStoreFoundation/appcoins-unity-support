@@ -111,6 +111,20 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                   "are in build settings are true by default)");
 
         int scenesLength = EditorBuildSettings.scenes.Length;
+
+        // Get enabled scenes at build settings scenes
+        instance.buildScenesEnabled =
+                    instance.selector.GetBuildSettingsScenesEnabled();
+
+        // Add open scenes in the hierarchy window if build settings scenes list
+        // have none
+        if (instance.buildScenesEnabled.Length == 0)
+        {
+            instance.selector.AddAllOpenScenesToBuildSettings();
+            instance.buildScenesEnabled =
+                    instance.selector.GetBuildSettingsScenesEnabled();
+        }
+
         float scrollViewLength = scenesLength * 25f;
         scenesPartHeight += 30;
         scrollViewVector = GUI.BeginScrollView(
@@ -118,8 +132,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             scrollViewVector,
             new Rect(0, 0, 500, scrollViewLength)
         );
-
-        for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
+        for (int i = 0; i < scenesLength; i++)
         {
             instance.buildScenesEnabled[i] = GUI.Toggle(
                 new Rect(10, 10 + i * 20, 500, 20),
@@ -127,9 +140,10 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 EditorBuildSettings.scenes[i].path
             );
         }
-
-        instance.selector.UpdatedBuildScenes(instance.buildScenesEnabled);
         GUI.EndScrollView();
+
+        // Pass enabled scenes to SelectScenes class 
+        instance.selector.UpdatedBuildScenes(instance.buildScenesEnabled);
 
         // BUTTONS
         if (GUI.Button(new Rect(5, 470, 100, 20), "Player Settings"))

@@ -155,7 +155,7 @@ public class CustomBuildErrorWindow : EditorWindow
             i++;
         }
 
-        GUI.Label(new Rect(10, height, 580, height + 50), "Error:\n" + 
+        GUI.Label(new Rect(10, height, 580, 50), "Error:\n" + 
                   errorMessage, GUI.skin.textArea);
 
         if (GUI.Button(new Rect(530, 470, 60, 20), "Got it"))

@@ -149,6 +149,12 @@
     <Compile Include="..\Scripts\Support\Editor\Utils\Tools.cs">
       <Link>Support\Editor\Utils\Tools.cs</Link>
     </Compile>
+    <Compile Include="..\Scripts\Support\Editor\Utils\DisplayDialogMessageHandler.cs">
+      <Link>Support\Editor\Utils\DisplayDialogMessageHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\Scripts\Support\Editor\Utils\MessageHandler.cs">
+      <Link>Support\Editor\Utils\MessageHandler.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Support\Editor\CustomBuild\CustomBuildMenuItem\" />

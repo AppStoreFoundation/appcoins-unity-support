@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 public abstract class CustomBuildWindow : EditorWindow
 {
-    protected static CustomBuildWindow instance;
+    protected static CustomBuildWindow instance = null;
     internal CustomBuildWindow innerInstance;
     public Vector2 scrollViewVector = Vector2.zero;
 
@@ -53,8 +53,15 @@ public abstract class CustomBuildWindow : EditorWindow
 
     void OnGUI()
     {
+        if (EditorWindow.mouseOverWindow != null)
+        {
+            this.Focus();
+            //FocusWindowIfItsOpen(typeof(CustomBuildWindow));
+        }
+
         if (instance != null)
         {
+
             switch (instance.stage)
             {
                 case BuildStage.IDLE:

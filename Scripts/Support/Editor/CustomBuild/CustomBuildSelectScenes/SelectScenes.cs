@@ -87,7 +87,10 @@ public class SelectScenes
                                              enabledScenes[i]);
         }
 
-        EditorBuildSettings.scenes = newBuildScenes;
+        if (newBuildScenes.Length > 0)
+        {
+            EditorBuildSettings.scenes = newBuildScenes;
+        }
     }
 
 }

@@ -42,7 +42,7 @@ public abstract class CustomBuildWindow : EditorWindow
         instance.autoRepaintOnSceneChange = true;
 
         instance.innerInstance.LoadCustomBuildPrefs();
-        instance.Show();
+        instance.ShowUtility();
     }
 
     public void OnInspectorUpdate()
@@ -53,11 +53,11 @@ public abstract class CustomBuildWindow : EditorWindow
 
     void OnGUI()
     {
-        if (EditorWindow.mouseOverWindow != null)
-        {
-            this.Focus();
-            //FocusWindowIfItsOpen(typeof(CustomBuildWindow));
-        }
+        //if (EditorWindow.mouseOverWindow != null)
+        //{
+        //    this.Focus();
+        //    //FocusWindowIfItsOpen(typeof(CustomBuildWindow));
+        //}
 
         if (instance != null)
         {

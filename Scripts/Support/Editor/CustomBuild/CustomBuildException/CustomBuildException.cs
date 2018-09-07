@@ -48,7 +48,7 @@ public class InvalidUnityVersion : CustomBuildException
 public class ExportProjectPathIsEqualToUnityProjectPathException : 
              CustomBuildException
 {
-    private const string _message = "Path chosed to store the exported " +
+    private const string _message = "Path chosen to store the exported " +
         "project is the same as the unity root project";
 
     public ExportProjectPathIsEqualToUnityProjectPathException() : base(_message)
@@ -73,7 +73,7 @@ public class ExportProjectPathIsEqualToUnityProjectPathException :
 
 public class ExportProjectPathIsNullException : CustomBuildException
 {
-    const string _message = "Invalid path chosed to save the exported project";
+    const string _message = "Invalid path chosen to save the exported project";
 
     public ExportProjectPathIsNullException() : base(_message)
     {

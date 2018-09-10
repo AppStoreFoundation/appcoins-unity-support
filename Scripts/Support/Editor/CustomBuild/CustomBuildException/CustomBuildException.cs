@@ -12,7 +12,7 @@ public class CustomBuildException : Exception
         message = mes;
     }
 
-    public CustomBuildException(string mes, Exception inner) 
+    public CustomBuildException(string mes, Exception inner)
         : base(mes, inner)
     {
         message = mes;
@@ -45,7 +45,7 @@ public class InvalidUnityVersion : CustomBuildException
     }
 }
 
-public class ExportProjectPathIsEqualToUnityProjectPathException : 
+public class ExportProjectPathIsEqualToUnityProjectPathException :
              CustomBuildException
 {
     private const string _message = "Path chosen to store the exported " +
@@ -193,6 +193,31 @@ public class BDSAppcoinsGameObjectNotFound : CustomBuildException
     }
 
     public BDSAppcoinsGameObjectNotFound(string new_message,
+        Exception inner) : base(new_message, inner)
+    {
+    }
+}
+
+public class PurchaserObjectIsNullException : CustomBuildException
+{
+    const string _message = "ASFAppcoinsUnity purchaserObject is set to" +
+        " null";
+
+    public PurchaserObjectIsNullException() : base(_message)
+    {
+    }
+
+    public PurchaserObjectIsNullException(string new_message)
+        : base(new_message)
+    {
+    }
+
+    public PurchaserObjectIsNullException(Exception inner)
+        : base(_message, inner)
+    {
+    }
+
+    public PurchaserObjectIsNullException(string new_message,
         Exception inner) : base(new_message, inner)
     {
     }

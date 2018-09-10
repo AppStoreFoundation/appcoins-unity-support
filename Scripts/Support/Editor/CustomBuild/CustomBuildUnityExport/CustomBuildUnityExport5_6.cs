@@ -4,8 +4,8 @@ using System.IO;
 
 public class CustomBuildUnityExport5_6 : CustomBuildUnityExport
 {
-    private string rightDllLoc;
-    private string tempDllLoc;
+    //private string rightDllLoc;
+    //private string tempDllLoc;
 
     public CustomBuildUnityExport5_6(BuildTarget bT, BuildOptions bO, 
                                      ICustomBuildTarget target) :

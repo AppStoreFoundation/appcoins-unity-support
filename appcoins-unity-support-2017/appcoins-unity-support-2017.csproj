@@ -122,12 +122,6 @@
     <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildUnityExport\CustomBuildUnityExport.cs">
       <Link>Support\Editor\CustomBuild\CustomBuildUnityExport\CustomBuildUnityExport.cs</Link>
     </Compile>
-    <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildUnityExport\CustomBuildUnityExport2017.cs">
-      <Link>Support\Editor\CustomBuild\CustomBuildUnityExport\CustomBuildUnityExport2017.cs</Link>
-    </Compile>
-    <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildUnityExport\UnityVersion.cs">
-      <Link>Support\Editor\CustomBuild\CustomBuildUnityExport\UnityVersion.cs</Link>
-    </Compile>
     <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildWindow\AndroidCustomBuildWindow.cs">
       <Link>Support\Editor\CustomBuild\CustomBuildWindow\AndroidCustomBuildWindow.cs</Link>
     </Compile>

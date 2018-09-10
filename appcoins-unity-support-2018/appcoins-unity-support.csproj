@@ -6,8 +6,8 @@
     <ProjectGuid>{6F5C1940-D712-4560-B0D7-44CEB9BE8727}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>unityeditor2018</RootNamespace>
-    <AssemblyName>AppCoinsUnitySupport2018</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AssemblyName>AppCoinsUnitySupport</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,13 +22,13 @@
       <CustomCommands>
         <Command>
           <type>AfterBuild</type>
-          <command>chmod +x ./Scripts/Bash/run_command_2018.sh</command>
+          <command>chmod +x ./Scripts/Bash/run_command.sh</command>
           <workingdir>${SolutionDir}</workingdir>
           <externalConsole>True</externalConsole>
         </Command>
         <Command>
           <type>AfterBuild</type>
-          <command>./Scripts/Bash/run_command_2018.sh</command>
+          <command>./Scripts/Bash/run_command.sh</command>
           <workingdir>${SolutionDir}</workingdir>
           <externalConsole>True</externalConsole>
         </Command>
@@ -45,10 +45,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="UnityEditor">
-      <HintPath>..\dependencies\2018\UnityEditor.dll</HintPath>
+      <HintPath>..\dependencies\5.6\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\dependencies\2018\UnityEngine.dll</HintPath>
+      <HintPath>..\dependencies\5.6\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -116,9 +116,6 @@
     <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildUnityExport\CustomBuildUnityExport.cs">
       <Link>Support\Editor\CustomBuild\CustomBuildUnityExport\CustomBuildUnityExport.cs</Link>
     </Compile>
-    <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildUnityExport\CustomBuildUnityExport2018.cs">
-      <Link>Support\Editor\CustomBuild\CustomBuildUnityExport\CustomBuildUnityExport2018.cs</Link>
-    </Compile>
     <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildWindow\AndroidCustomBuildWindow.cs">
       <Link>Support\Editor\CustomBuild\CustomBuildWindow\AndroidCustomBuildWindow.cs</Link>
     </Compile>
@@ -142,9 +139,6 @@
     </Compile>
     <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildSetupEnv\AppcoinsGameObject\AppcoinsGameObject.cs">
       <Link>Support\Editor\CustomBuild\CustomBuildSetupEnv\AppcoinsGameObject\AppcoinsGameObject.cs</Link>
-    </Compile>
-    <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildUnityExport\UnityVersion.cs">
-      <Link>Support\Editor\CustomBuild\CustomBuildUnityExport\UnityVersion.cs</Link>
     </Compile>
     <Compile Include="..\Scripts\Support\Editor\Utils\DisplayDialogMessageHandler.cs">
       <Link>Support\Editor\Utils\DisplayDialogMessageHandler.cs</Link>

@@ -9,6 +9,7 @@ public class CustomBuildErrorWindow : EditorWindow
 
     private string[] errorTitles;
     private BuildStage failStage;
+    private BuildStage lastStage;
     private string errorMessage;
 
     public Vector2 scrollViewVector = Vector2.zero;
@@ -83,7 +84,7 @@ public class CustomBuildErrorWindow : EditorWindow
                                                               failStage);
 
         int i = 0;
-        while (i < allStages.Length)
+        while (i <= (int) lastStage)
         {
             bool foundImage = false;
             string resultString = "";
@@ -176,6 +177,9 @@ public class CustomBuildErrorWindow : EditorWindow
         };
 
         failStage = (BuildStage) EditorPrefs.GetInt("appcoins_error_stage", 0);
+        lastStage = (BuildStage) 
+            EditorPrefs.GetInt("appcoins_last_error_stage", 2);
+
         errorMessage = EditorPrefs.GetString("appcoins_error_message", "");
 
         errorTitles = new string[allStages.Length];

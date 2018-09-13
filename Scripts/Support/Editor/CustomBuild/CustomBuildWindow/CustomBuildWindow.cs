@@ -14,13 +14,13 @@ public abstract class CustomBuildWindow : EditorWindow
     protected internal BuildStage stage;
     protected internal SelectScenes selector;
     protected internal bool[] buildScenesEnabled = null;
-    protected internal UnityEvent unityEvent;
+    protected internal BuildStageEvent unityEvent;
 
     //Create the custom Editor Window
     public static void CreateCustomBuildWindow(BuildStage s,
                                                CustomBuildWindow w, 
                                                SelectScenes sel,
-                                               UnityEvent ev
+                                               BuildStageEvent ev
                                               )
     {
         CustomBuildWindow.instance = (CustomBuildWindow)

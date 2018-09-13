@@ -18,9 +18,10 @@ public class CustomBuild
 
     private CustomBuildErrorTitles errorTitles;
 
-    private UnityEvent idleClosed;
+    private BuildStageEvent buildStagesToRun;
 
     public BuildStage stage;
+    private BuildStage lastBuildStage;
 
     public CustomBuild(CustomBuildSetupEnv setupEnv, CustomBuildWindow window,
                        CustomBuildUnityExport unityExport, 
@@ -41,7 +42,7 @@ public class CustomBuild
 
         errorTitles = eT;
 
-        idleClosed = new UnityEvent();
+        buildStagesToRun = new BuildStageEvent();
     }
 
     // Run all custom build phases
@@ -66,11 +67,12 @@ public class CustomBuild
             CustomBuildWindow.CreateCustomBuildWindow(stage,
                                                       customBuildWindow, 
                                                       scenesSelector,
-                                                      idleClosed
+                                                      buildStagesToRun
                                                      );
-            idleClosed.AddListener(
-                delegate
+            buildStagesToRun.AddListener(
+                delegate(BuildStage lastStage)
             {
+                lastBuildStage = lastStage;
                 scenesPath = scenesSelector.ScenesToString();
                 RunInstalationProcess();
             }
@@ -92,6 +94,7 @@ public class CustomBuild
             // Phase 3: Export Unity Project
             StateUnityExport();
             customBuildUnityExport.UnityExport(stage, scenesPath, out projPath);
+            if (lastBuildStage == stage) { return; }
         }
         catch (ExportProjectPathIsEqualToUnityProjectPathException e)
         {
@@ -114,6 +117,7 @@ public class CustomBuild
             // Phase 5: Build Exported Project
             StateProjectBuild();
             customBuildProjectBuild.BuildProject(stage, projPath);
+            if (lastBuildStage == stage) { BuildSuccess(); return; }
         }
         catch (TerminalProcessFailedException e)
         {
@@ -126,6 +130,7 @@ public class CustomBuild
             // Phase 6: Intall apk
             StateProjectInstall();
             customBuildProjectInstall.InstallProject(stage, projPath);
+            if (lastBuildStage == stage) { BuildSuccess(); return; }
         }
         catch (TerminalProcessFailedException e)
         {
@@ -138,22 +143,27 @@ public class CustomBuild
             // Phase 7: Run apk
             StateProjectRun();
             customBuildProjectRun.RunProject(stage, projPath);
+            if (lastBuildStage == stage) { BuildSuccess(); return; }
         }
         catch (TerminalProcessFailedException e)
         {
             HandleExceptions(e);
             return;
         }
-
-        EditorUtility.DisplayDialog("Custom Build", "Custom Build Completed " +
-                                    "whitout any errors", "OK");
     }
 
     private void HandleExceptions(Exception e)
     {
         EditorPrefs.SetInt("appcoins_error_stage", (int) stage);
+        EditorPrefs.SetInt("appcoins_last_error_stage", (int) lastBuildStage);
         EditorPrefs.SetString("appcoins_error_message", e.Message);
         CustomBuildErrorWindow.CreateCustomBuildErrorWindow();
+    }
+
+    private void BuildSuccess()
+    {
+        EditorUtility.DisplayDialog("Custom Build", "Custom Build completed " +
+                                    "whitout any errors.", "OK");
     }
 
     #region State Handling

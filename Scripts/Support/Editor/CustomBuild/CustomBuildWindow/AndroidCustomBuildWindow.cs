@@ -15,6 +15,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     private bool runAdbInstall;
     private string mainActivityPath;
     private bool runAdbRun;
+    private BuildStage lastBuildSatage;
 
     protected override void IdleGUI()
     {
@@ -85,8 +86,8 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         float adbRunPartHeight = adbPartHeight + 20;
         GUI.Label(new Rect(5, adbRunPartHeight, 590, 40),
-                  "Path to the main activity name (.UnityPlayerActivity " +
-                  "by default)"
+                  "Path to the main activity name " +
+                  "({package name}/.UnityPlayerActivity by default)"
                  );
 
         adbRunPartHeight += 20;
@@ -112,18 +113,16 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         int scenesLength = EditorBuildSettings.scenes.Length;
 
-        // Get enabled scenes at build settings scenes
-        instance.buildScenesEnabled =
-                    instance.selector.GetBuildSettingsScenesEnabled();
-
         // Add open scenes in the hierarchy window if build settings scenes list
         // have none
         if (instance.buildScenesEnabled.Length == 0)
         {
             instance.selector.AddAllOpenScenesToBuildSettings();
-            instance.buildScenesEnabled =
-                    instance.selector.GetBuildSettingsScenesEnabled();
         }
+
+        // Get enabled scenes at build settings scenes
+        instance.buildScenesEnabled =
+                    instance.selector.GetBuildSettingsScenesEnabled();
 
         float scrollViewLength = scenesLength * 25f;
         scenesPartHeight += 30;
@@ -167,9 +166,25 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             GUI.Button(new Rect(530, 470, 60, 20), "Confirm")
            )
         {
+            // Check what is the last build stage
+            if (runAdbInstall == true && runAdbRun == true)
+            {
+                lastBuildSatage = BuildStage.PROJECT_RUN;
+            }
+
+            else if (runAdbInstall == true)
+            {
+                lastBuildSatage = BuildStage.PROJECT_INSTALL;
+            }
+
+            else
+            {
+                lastBuildSatage = BuildStage.PROJECT_BUILD;
+            }
+
             SetCustomBuildPrefs();
             instance.Close();
-            instance.unityEvent.Invoke();
+            instance.unityEvent.Invoke(lastBuildSatage);
         }
     }
 

@@ -1,3 +1,5 @@
+using UnityEngine.Events;
+
 public enum BuildStage
 {
     SETUP_ENV,
@@ -8,3 +10,5 @@ public enum BuildStage
     PROJECT_RUN,
     DONE,
 }
+
+public class BuildStageEvent : UnityEvent<BuildStage> { }

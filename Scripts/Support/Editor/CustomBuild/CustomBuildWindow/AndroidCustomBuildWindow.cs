@@ -6,6 +6,7 @@ using UnityEngine;
 public class AndroidCustomBuildWindow : CustomBuildWindow
 {
     // Default values:
+    private string packageName;
     private string gradlePath;
     private bool buildRelease;
     private bool debugMode;
@@ -17,16 +18,25 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     private bool runAdbRun;
     private BuildStage lastBuildSatage;
 
+    private string defaultGradleMem = "1536";
+    private string defaultDexMem = "1024";
+
     protected override void IdleGUI()
     {
+        int xEnd = (int)instance.position.width;
+        int xDelta = 10;
+
+        int yEnd = (int)instance.position.height;
+        int yDelta = 10;
+
         // GRADLE
         float gradlePartHeight = 5;
-        GUI.Label(new Rect(5, gradlePartHeight, 590, 40),
+        GUI.Label(new Rect(5, gradlePartHeight, xEnd - xDelta, 40),
                   "Select the gradle path:");
 
         gradlePartHeight += 20;
         gradlePath = GUI.TextField(
-            new Rect(5, gradlePartHeight, 590, 20),
+            new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
             gradlePath);
 
         gradlePath =
@@ -35,7 +45,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         gradlePartHeight += 20;
         buildRelease = GUI.Toggle(
-                new Rect(5, gradlePartHeight, 590, 20),
+                new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
                 buildRelease,
                 "Build a Release version? (Uncheck it if you want to build a " +
                 "Debug Version)."
@@ -43,7 +53,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         gradlePartHeight += 20;
         debugMode = GUI.Toggle(
-            new Rect(5, gradlePartHeight, 590, 20),
+            new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
             debugMode,
             "Run gradle in debug mode? This will not end gradle terminal " +
             "automatically."
@@ -63,15 +73,15 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             new Rect(105, gradlePartHeight, 60, 20),
             dexMem
         );
-        GUI.Label(new Rect(165, gradlePartHeight, 590, 20),
+        GUI.Label(new Rect(165, gradlePartHeight, xEnd - xDelta, 20),
                   "MB  (Gradle heap size has to be grater than Dex heap size)");
 
         // ADB
         float adbPartHeight = gradlePartHeight + 50;
-        GUI.Label(new Rect(5, adbPartHeight, 590, 40), "Select the adb path:");
+        GUI.Label(new Rect(5, adbPartHeight, xEnd - xDelta, 40), "Select the adb path:");
 
         adbPartHeight += 20;
-        adbPath = GUI.TextField(new Rect(5, adbPartHeight, 590, 20),
+        adbPath = GUI.TextField(new Rect(5, adbPartHeight, xEnd - xDelta, 20),
                                             adbPath);
         adbPath =
             HandleCopyPaste(GUIUtility.keyboardControl) ??
@@ -79,20 +89,20 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         adbPartHeight += 20;
         runAdbInstall = GUI.Toggle(
-            new Rect(5, adbPartHeight, 590, 20),
+            new Rect(5, adbPartHeight, xEnd - xDelta, 20),
             runAdbInstall,
             "Install build when done?"
         );
 
         float adbRunPartHeight = adbPartHeight + 20;
-        GUI.Label(new Rect(5, adbRunPartHeight, 590, 40),
+        GUI.Label(new Rect(5, adbRunPartHeight, xEnd - xDelta, 40),
                   "Path to the main activity name " +
                   "({package name}/.UnityPlayerActivity by default)"
                  );
 
         adbRunPartHeight += 20;
         mainActivityPath = GUI.TextField(
-            new Rect(5, adbRunPartHeight, 590, 20),
+            new Rect(5, adbRunPartHeight, xEnd - xDelta, 20),
             mainActivityPath
         );
         mainActivityPath =
@@ -101,13 +111,13 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         adbRunPartHeight += 20;
         runAdbRun = GUI.Toggle(
-            new Rect(5, adbRunPartHeight, 590, 20),
+            new Rect(5, adbRunPartHeight, xEnd - xDelta, 20),
             runAdbRun,
             "Run build when done?");
 
         // SCENES
         float scenesPartHeight = adbRunPartHeight + 40;
-        GUI.Label(new Rect(5, scenesPartHeight, 590, 40),
+        GUI.Label(new Rect(5, scenesPartHeight, xEnd - xDelta, 40),
                   "Select what scenes you want to export:\n(Only scenes that " +
                   "are in build settings are true by default)");
 
@@ -127,14 +137,14 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
         float scrollViewLength = scenesLength * 25f;
         scenesPartHeight += 30;
         scrollViewVector = GUI.BeginScrollView(
-            new Rect(5, scenesPartHeight, 590, 215),
+            new Rect(5, scenesPartHeight, xEnd - xDelta, 215),
             scrollViewVector,
-            new Rect(0, 0, 500, scrollViewLength)
+            new Rect(0, 0, xEnd - xEnd / 10, scrollViewLength)
         );
         for (int i = 0; i < scenesLength; i++)
         {
             instance.buildScenesEnabled[i] = GUI.Toggle(
-                new Rect(10, 10 + i * 20, 500, 20),
+                new Rect(10, 10 + i * 20, xEnd - xEnd / 10, 20),
                 instance.buildScenesEnabled[i],
                 EditorBuildSettings.scenes[i].path
             );
@@ -145,25 +155,56 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
         instance.selector.UpdatedBuildScenes(instance.buildScenesEnabled);
 
         // BUTTONS
-        if (GUI.Button(new Rect(5, 470, 100, 20), "Player Settings"))
+        int buttonHeight = 30;
+        int buttonWidth = 120;
+
+        if (GUI.Button(
+            new Rect(
+                xDelta, 
+                yEnd - buttonHeight - yDelta, 
+                buttonWidth, 
+                buttonHeight), 
+            "Player Settings")
+           )
         {
             EditorApplication.ExecuteMenuItem("Edit/Project Settings/Player");
         }
 
-        if (GUI.Button(new Rect(115, 470, 120, 20), "Add Open Scenes"))
+        if (GUI.Button(
+            new Rect(
+                2 * xDelta + buttonWidth,
+                yEnd - buttonHeight - yDelta, 
+                buttonWidth, 
+                buttonHeight), 
+            "Add Open Scenes")
+           )
         {
             instance.selector.AddAllOpenScenesToBuildSettings();
             instance.selector.buildScenesEnabled = 
                 instance.selector.GetBuildSettingsScenesEnabled();
         }
 
-        if (GUI.Button(new Rect(460, 470, 60, 20), "Cancel"))
+        if (GUI.Button(
+            new Rect(
+                xEnd - 2 * buttonWidth -  2 * xDelta, 
+                yEnd - buttonHeight - yDelta, 
+                buttonWidth, 
+                buttonHeight), 
+            "Cancel")
+           )
         {
             instance.Close();
         }
 
         if (gradlePath != "" &&
-            GUI.Button(new Rect(530, 470, 60, 20), "Confirm")
+            GUI.Button(
+                new Rect(
+                    xEnd - buttonWidth - xDelta,
+                    yEnd - buttonHeight - yDelta,
+                    buttonWidth, 
+                    buttonHeight), 
+                "Confirm"
+               )
            )
         {
             // Check what is the last build stage
@@ -216,6 +257,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
     protected override void SetCustomBuildPrefs()
     {
+        EditorPrefs.SetString("appcoins_package_name", Application.identifier);
         EditorPrefs.SetString("appcoins_gradle_path", gradlePath);
         EditorPrefs.SetString("appcoins_adb_path", adbPath);
         EditorPrefs.SetString("appcoins_main_activity_path",
@@ -233,8 +275,35 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
     protected override void LoadCustomBuildPrefs()
     {
-        gradlePath = EditorPrefs.GetString(
-            "appcoins_gradle_path", 
+        packageName = EditorPrefs.GetString("appcoins_package_name", "");
+
+        // If package name is different we assume that the user is working in 
+        // a different unity project
+        if (!Application.identifier.Equals(packageName))
+        {
+            gradlePath = SystemInfo.operatingSystemFamily == 
+                                   OperatingSystemFamily.Windows ?
+            "C:\\Program Files\\Android\\Android Studio\\gradle\\" +
+                "gradle-4.4\\bin\\gradle" :
+            "/Applications/Android Studio.app/Contents/gradle/gradle-4.4/" +
+                "bin/";
+
+            adbPath = EditorPrefs.GetString("AndroidSdkRoot") +
+                                 "/platform-tools/adb";
+
+            mainActivityPath = Application.identifier + "/.UnityPlayerActivity";
+            buildRelease = false;
+            runAdbInstall = false;
+            runAdbRun = false;
+            debugMode = false;
+            gradleMem = defaultGradleMem;
+            dexMem = defaultDexMem;
+        }
+
+        else
+        {
+            gradlePath = EditorPrefs.GetString(
+            "appcoins_gradle_path",
             SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows ?
             "C:\\Program Files\\Android\\Android Studio\\gradle\\" +
                 "gradle-4.4\\bin\\gradle" :
@@ -242,26 +311,29 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 "bin/"
          );
 
-        adbPath = EditorPrefs.GetString(
-            "appcoins_adb_path", 
-            EditorPrefs.GetString("AndroidSdkRoot") + 
-                "/platform-tools/adb"
-        );
+            adbPath = EditorPrefs.GetString(
+                "appcoins_adb_path",
+                EditorPrefs.GetString("AndroidSdkRoot") +
+                    "/platform-tools/adb"
+            );
 
-        mainActivityPath = EditorPrefs.GetString(
-            "appcoins_main_activity_path", 
-            Application.identifier + "/.UnityPlayerActivity");
-        
-        buildRelease = EditorPrefs.GetBool("appcoins_build_release", false);
-        
-        runAdbInstall = EditorPrefs.GetBool("appcoins_run_adb_install", false);
-        
-        runAdbRun = EditorPrefs.GetBool("appcoins_run_adb_run", false);
-        
-        debugMode = EditorPrefs.GetBool("appcoins_debug_mode", false);
-        
-        gradleMem = EditorPrefs.GetString("appcoins_gradle_mem", "1536");
+            mainActivityPath = EditorPrefs.GetString(
+                "appcoins_main_activity_path",
+                Application.identifier + "/.UnityPlayerActivity");
 
-        dexMem = EditorPrefs.GetString("appcoins_dex_mem", "1024");
+            buildRelease = EditorPrefs.GetBool("appcoins_build_release", false);
+
+            runAdbInstall = EditorPrefs.GetBool("appcoins_run_adb_install", false);
+
+            runAdbRun = EditorPrefs.GetBool("appcoins_run_adb_run", false);
+
+            debugMode = EditorPrefs.GetBool("appcoins_debug_mode", false);
+
+            gradleMem = EditorPrefs.GetString("appcoins_gradle_mem", 
+                                              defaultGradleMem);
+
+            dexMem = EditorPrefs.GetString("appcoins_dex_mem", defaultDexMem);
+        }
+
     }
 }

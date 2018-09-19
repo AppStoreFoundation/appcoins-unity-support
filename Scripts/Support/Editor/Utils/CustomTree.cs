@@ -206,7 +206,9 @@ public class Tree<T>
 
     private static bool StringBlackList(string s)
     {
-        if(Array.Exists(Tree<T>.stringsToRemove, arrayString => arrayString.Contains(s)))
+        if(Array.Exists(Tree<T>.stringsToRemove, 
+                        arrayString => arrayString.Contains(s))
+          )
         {
             return true;
         }
@@ -215,7 +217,8 @@ public class Tree<T>
     }
 
     // Create tree from a file (T = string)
-    public static Tree<string> CreateTreeFromFile(string pathToFile, FileParser fileParser)
+    public static Tree<string> CreateTreeFromFile(string pathToFile, 
+                                                  FileParser fileParser)
     {
         StreamReader fileReader = new StreamReader(pathToFile);
         string allFile = fileReader.ReadToEnd();
@@ -243,7 +246,9 @@ public class Tree<T>
             // Ignore whitespaces till first letter (or number? or punctuation?)
             while(newLine && i < allFile.Length)
             {
-                if(Char.IsDigit(allFile[i]) || Char.IsLetter(allFile[i]) || Char.IsPunctuation(allFile[i]))
+                if(Char.IsDigit(allFile[i]) || Char.IsLetter(allFile[i]) || 
+                   Char.IsPunctuation(allFile[i])
+                  )
                 {
                     newLine = false;
                     break;
@@ -256,7 +261,9 @@ public class Tree<T>
             if(allFile[i].Equals('{'))
             {
                 currentNode.AddChild(new Node<string>(newString, currentNode));
-                currentNode = currentNode.GetChild(currentNode.GetChildsCount() - 1);
+                currentNode = currentNode.GetChild(
+                    currentNode.GetChildsCount() - 1);
+
                 // UnityEngine.Debug.Log(newString);
                 newString = "";
                 t._height++;
@@ -268,7 +275,8 @@ public class Tree<T>
             {
                 if(newString.Length > 0)
                 {
-                    currentNode.AddChild(new Node<string>(newString, currentNode));
+                    currentNode.AddChild(
+                        new Node<string>(newString, currentNode));
                 }
 
                 // UnityEngine.Debug.Log(newString);
@@ -281,9 +289,15 @@ public class Tree<T>
             {
                 // Create new child node before closing father node
                 if(newString.Length > 0 && 
-                    (Char.IsLetter(newString[0]) || Char.IsDigit(newString[0]) || Char.IsPunctuation(newString[0])))
+                    (Char.IsLetter(newString[0]) || 
+                     Char.IsDigit(newString[0]) || 
+                     Char.IsPunctuation(newString[0])
+                    )
+                  )
                 {
-                    currentNode.AddChild(new Node<string>(newString, currentNode));
+                    currentNode.AddChild(new Node<string>(newString, 
+                                                          currentNode));
+
                     // UnityEngine.Debug.Log(newString);
                     newString = "";
                     t._height++;                 
@@ -321,7 +335,8 @@ public class Tree<T>
     }
 
     // Create file from tree (each node item is one line) to a specific path.
-    public static void CreateFileFromTree(Tree<string> t, string pathFile, bool append, FileParser fileParser)
+    public static void CreateFileFromTree(Tree<string> t, string pathFile, 
+                                          bool append, FileParser fileParser)
     {
         StreamWriter fileWriter = new StreamWriter(pathFile, append);
 
@@ -334,19 +349,31 @@ public class Tree<T>
     }
 
     // Create a build gardle file from tree.
-    private static void CreateGradleFileFromTree(Tree<string> t, StreamWriter fileWriter)
+    private static void CreateGradleFileFromTree(Tree<string> t, 
+                                                 StreamWriter fileWriter)
     {
-        Node<string> commentNode = t.GetRoot().FindChild(node => node.ToString().Equals(Tree<string>.appcoinsComment));
+        Node<string> commentNode = 
+            t.GetRoot().FindChild(
+                node => node.ToString().Equals(Tree<string>.appcoinsComment)
+            );
+
         t.GetRoot().RemoveChild(commentNode);
-        t.GetRoot().InsertChild(Tree<string>.insertAppcoinsCommentIndex, new Node<string>(Tree<string>.appcoinsComment, t.GetRoot()));
+        t.GetRoot().InsertChild(Tree<string>.insertAppcoinsCommentIndex, 
+                                new Node<string>(Tree<string>.appcoinsComment, 
+                                t.GetRoot()));
 
         t.TraverseDFS(
             t.GetRoot(),
             delegate(Node<string> node)
             {
-                if(!Tree<string>.StringBlackList(node.ToString().Replace(" ", "")) && !node.ToString().Equals("root"))
+                if(!Tree<string>.StringBlackList(
+                        node.ToString().Replace(" ", "")
+                   ) && 
+                   !node.ToString().Equals("root"))
                 {
-                    string s = Node<string>.ParseItem(node, node.GetDepth() - 1);
+                    string s = 
+                        Node<string>.ParseItem(node, node.GetDepth() - 1);
+
                     fileWriter.WriteLine(s);
                 }
             },
@@ -372,7 +399,8 @@ public class Tree<T>
         );
     }
 
-    // BFS Algorithm. We can invoke a function when visiting the current, when visiting the childs of the current node
+    // BFS Algorithm. We can invoke a function when visiting the current, when 
+    // visiting the childs of the current node
     // and when queueing the unvisited childs of the current node.
     public void TreeBFS(
         Node<T> source, 
@@ -383,7 +411,8 @@ public class Tree<T>
         TraverseDFS(source, delegate(Node<T> node)
         {
             node._visited = false;
-        }, delegate(Node<T> node){}, delegate(Node<T> node){}, delegate(Node<T> node){});
+        }, delegate(Node<T> node){}, delegate(Node<T> node){}, 
+                    delegate(Node<T> node){});
 
         Queue q = new Queue();
         q.Enqueue(source);
@@ -413,8 +442,9 @@ public class Tree<T>
         }
     }
 
-    // (BFS) Find a the tree path from a list of nodes (returns the last node that exists at tree and list).
-    // If a path's node exists in the tree that node is removed from the 'path' list.
+    // (BFS) Find a the tree path from a list of nodes (returns the last node 
+    // that exists at tree and list). If a path's node exists in the tree that 
+    // node is removed from the 'path' list.
     private Node<T> FindPath(List<Node<T>> path, ref int pathIndex)
     {
         Node<T> nodeToFind = path[++pathIndex];
@@ -422,7 +452,12 @@ public class Tree<T>
 
         while(true)
         {
-            Node<T> aux = currentTreeNode.FindChild(node => node.ToString().Replace(" ", "").Equals(nodeToFind.ToString().Replace(" ", "")));
+            Node<T> aux = 
+                currentTreeNode.FindChild(
+                    node => node.ToString()
+                        .Replace(" ", "")
+                        .Equals(nodeToFind.ToString().Replace(" ", ""))
+                );
 
             if(aux == null)
             {
@@ -450,12 +485,15 @@ public class Tree<T>
     }
 
     // Insert new path to tree
-    private void InsertPath(Node<T> parentTreeNode, List<Node<T>> path, ref int pathIndex)
+    private void InsertPath(Node<T> parentTreeNode, List<Node<T>> path, 
+                            ref int pathIndex)
     {
        while(pathIndex < path.Count)
        {
            Node<T> nodeToCopy = path[pathIndex];
-           Node<T> newTreeNode = new Node<T>(nodeToCopy.GetItem(), nodeToCopy.GetParent());
+           Node<T> newTreeNode = new Node<T>(nodeToCopy.GetItem(), 
+                                             nodeToCopy.GetParent());
+
            parentTreeNode.AddChild(newTreeNode);
            parentTreeNode = newTreeNode;
            pathIndex++;
@@ -470,7 +508,7 @@ public class Tree<T>
         InsertPath(parent, path, ref pathIndex);
     }
 
-    // Merge this.Tree with tree (puplicate nodes are discarded).
+    // Merge this.Tree with tree (duplicate nodes are discarded).
     public void MergeTrees(Tree<T> tree)
     {
         List<Node<T>> path = new List<Node<T>>(tree.GetHeight() + 1);

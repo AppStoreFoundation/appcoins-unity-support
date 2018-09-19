@@ -159,4 +159,50 @@ public class Tools
 
         return path;
     }
+
+    internal static void MergeMainTemplates(string baseFilePath, 
+                                     string fileToMergePath)
+    {
+        if (File.Exists(baseFilePath))
+        {
+            if (PerformAutomaticMerge(baseFilePath))
+            {
+                Tree<string> tCurrent = Tree<string>.CreateTreeFromFile(
+                    baseFilePath, FileParser.BUILD_GRADLE
+                );
+                
+                Tree<string> tAppcoins = Tree<string>.CreateTreeFromFile(
+                    fileToMergePath, FileParser.BUILD_GRADLE
+                );
+                
+                tCurrent.MergeTrees(tAppcoins);
+                Tree<string>.CreateFileFromTree(tCurrent, 
+                                                baseFilePath, 
+                                                false, 
+                                                FileParser.BUILD_GRADLE);
+            }
+        }
+
+        else
+        {
+            File.Copy(fileToMergePath, baseFilePath, true);
+        }
+    }
+
+    private static bool PerformAutomaticMerge(string filePath)
+    {
+        string checker = "// DONT PERFORM AUTOMATIC MERGE";
+
+        string[] fileLines = ReadFileToArray(filePath);
+
+        foreach(string line in fileLines)
+        {
+            if (line.Contains(checker))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

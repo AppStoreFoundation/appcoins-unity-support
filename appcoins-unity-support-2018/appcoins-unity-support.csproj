@@ -125,9 +125,6 @@
     <Compile Include="..\Scripts\Support\Editor\Terminal\BashUtils.cs">
       <Link>Support\Editor\Terminal\BashUtils.cs</Link>
     </Compile>
-    <Compile Include="..\Scripts\Support\Editor\Utils\AppcoinsStartup.cs">
-      <Link>Support\Editor\Utils\AppcoinsStartup.cs</Link>
-    </Compile>
     <Compile Include="..\Scripts\Support\Editor\Utils\CustomTree.cs">
       <Link>Support\Editor\Utils\CustomTree.cs</Link>
     </Compile>

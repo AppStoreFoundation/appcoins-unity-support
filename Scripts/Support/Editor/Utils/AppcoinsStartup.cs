@@ -3,14 +3,9 @@ using UnityEditor;
 using System;
 using System.IO;
 
-[InitializeOnLoad]
 public class Startup
 {
-    private static string appcoinsMainTemplate = UnityEngine.Application.dataPath + "/AppcoinsUnity/Plugins/Android/mainTemplate.gradle";
-    private static string currentMainTemplate = UnityEngine.Application.dataPath + "/Plugins/Android/mainTemplate.gradle";
-    private static string oldMainTemplate =  UnityEngine.Application.dataPath + "/Plugins/Android/oldMainTemplate.gradle";
 
-    public const string DEFAULT_UNITY_PACKAGE_IDENTIFIER = "com.Company.ProductName";
 
     static Startup()
     {

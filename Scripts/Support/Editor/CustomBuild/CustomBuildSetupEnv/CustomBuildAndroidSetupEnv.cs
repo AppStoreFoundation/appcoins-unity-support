@@ -6,11 +6,28 @@ using System;
 public class CustomBuildAndroidSetupEnv : CustomBuildSetupEnv
 {
     private const string defaultUnityPackage = "com.Company.ProductName";
+    private static string appcoinsMainTemplate = Application.dataPath +
+                                                            "/AppcoinsUnity/" +
+                                                            "Plugins/Android/" +
+                                                            "mainTemplate." +
+                                                            "gradle";
+
+    private static string currentMainTemplate = Application.dataPath +
+                                                           "/Plugins/Android/" +
+                                                           "mainTemplate." +
+                                                           "gradle";
 
     public CustomBuildAndroidSetupEnv(AppcoinsGameObject a) : base(a) {}
 
     internal override void Setup()
     {
+        // Merge main templates
+        Tools.MergeMainTemplates(currentMainTemplate, appcoinsMainTemplate);
+
+        // Update Assets folder (otherwise mainTemplate file icon will not show 
+        // up)
+        AssetDatabase.Refresh();
+
         try
         {
             base.Setup();
@@ -47,6 +64,7 @@ public class CustomBuildAndroidSetupEnv : CustomBuildSetupEnv
 
         // Export Project with gradle format (template)
         EditorUserBuildSettings.androidBuildSystem = AndroidBuildSystem.Gradle;
+
 
         //Make sure all non relevant errors go away
         UnityEngine.Debug.ClearDeveloperConsole();

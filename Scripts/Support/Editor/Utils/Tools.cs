@@ -205,4 +205,9 @@ public class Tools
 
         return true;
     }
+
+    private static void DeleteOldFiles()
+    {
+
+    }
 }

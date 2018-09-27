@@ -31,6 +31,6 @@ public class CustomBuildTargetAndroid : ICustomBuildTarget
         string newDexLine = dexMainTemplateNewLine.Replace("{0}", dexMem);
 
         Tools.ChangeLineInFile(mainTemplatePath, dexMainTemplateLine,
-                               dexContainers, newDexLine, 1);
+                               dexContainers, newDexLine);
     }
 }

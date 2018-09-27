@@ -7,47 +7,117 @@ using System.IO;
 
 public class Tools
 {
+    public delegate void Action<T1, T2>(T1 arg1, T2 arg2);
+    public delegate void Action<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3);
+
     // Change a line in a file as much times as specified. 
     // file has the same format as a .gradle file
     public static void ChangeLineInFile(string filePath, 
                                         string fileLine,
                                         string[] containers,
-                                        string newLine,
-                                        int times)
+                                        string newLine
+                                       )
     {
-        string[] fileLines = ReadFileToArray(filePath);
-        int linesChanged = 0;
+        IterateOverLinesAndContainers(
+            filePath, ReadFileToArray(filePath),
+            containers, 
+            fileLine,
+            newLine,
+            delegate (IList<string> fileLines, int index) { },
+            delegate (IList<string> fileLines, int index, bool insideContainer)
+            {
+                if (insideContainer && fileLines[index].Contains(fileLine))
+                {
+                    int tabsNum = GetLineTabsNumber(fileLines[index]);
+
+                    fileLines[index] = String.Concat(
+                                    fileLines[index].Substring(0, tabsNum - 1),
+                                    newLine);
+                }
+            }
+        );
+    }
+
+    public static void AddLineInFile(string filePath, string[] containers,
+                                     string line)
+    {
+        IterateOverLinesAndContainers(
+            filePath,
+            new List<string>(ReadFileToArray(filePath)),
+            containers,
+            "",
+            line,
+            delegate (IList<string> fileLines, int index)
+            {
+                int tabsNum = GetLineTabsNumber(fileLines[index]);
+                for (int j = 0; j < tabsNum + 1; j++)
+                {
+                    line = String.Concat("\t", line);
+                }
+
+                fileLines.Insert(index + 1, line);
+            },
+            delegate (IList<string> fileLines, int index, bool isInsCont) { }
+        );
+    }
+
+    public static void RemoveLineInFileWithSpecString(string filePath, 
+                                                      string checker)
+    {
+        List<string> fileLines = new List<string>(ReadFileToArray(filePath));
+
+        fileLines.RemoveAll(str => str.Contains(checker));
+
+        WriteToFile(filePath, fileLines.ToArray());
+    }
+
+    private static void IterateOverLinesAndContainers(string filePath,
+                                               IList<string> fileList,
+                                               string[] containers,
+                                               string currentFileLine,
+                                               
+                                                      string newLine,
+                                               Action<IList<string>, int> 
+                                                      doInsideCont,
+                                               Action<IList<string>, int, bool> 
+                                                      doPerLine
+                                              )
+    {
+        const string endContString = "}";
         bool insideContainer = false;
 
-        for (int i = 0; i < fileLines.Length; i++)
+        for (int i = 0; i < fileList.Count; i++)
         {
             foreach (string container in containers)
             {
-                if (fileLines[i].Contains(container))
+                if (fileList[i].Contains(container))
                 {
+                    doInsideCont(fileList, i);
                     insideContainer = true;
                 }
             }
 
-            if (linesChanged < times && insideContainer && 
-                fileLines[i].Contains(fileLine))
-            {
-                // Retrive the number of tabs before the line just 
-                // to maintain the same format (we assume that
-                // only exists one 'command / definition' per line)
-                int tabsNum = 0;
-                while (Char.IsWhiteSpace(fileLines[i][tabsNum++])) {}
+            doPerLine(fileList, i, insideContainer);
 
-                fileLines[i] = String.Concat(
-                                    fileLines[i].Substring(0, tabsNum - 1),
-                                    newLine);
-                
-                linesChanged++;
+            if (fileList[i].Contains(endContString))
+            {
                 insideContainer = false;
             }
         }
 
-        WriteToFile(filePath, fileLines);
+        string[] cpyArray = new string[fileList.Count];
+        fileList.CopyTo(cpyArray, 0);
+        WriteToFile(filePath, cpyArray);
+    }
+
+    private static int GetLineTabsNumber(string line)
+    {
+        // Retrive the number of tabs before the line just 
+        // to maintain the same format (we assume that
+        // only exists one 'command / definition' per line)
+        int tabsNum = 0;
+        while (Char.IsWhiteSpace(line[tabsNum++])) { }
+        return tabsNum;
     }
 
     public static string[] ReadFileToArray(string filePath)
@@ -204,10 +274,5 @@ public class Tools
         }
 
         return true;
-    }
-
-    private static void DeleteOldFiles()
-    {
-
     }
 }

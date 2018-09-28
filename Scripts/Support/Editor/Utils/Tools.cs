@@ -21,8 +21,6 @@ public class Tools
         IterateOverLinesAndContainers(
             filePath, ReadFileToArray(filePath),
             containers, 
-            fileLine,
-            newLine,
             delegate (IList<string> fileLines, int index) { },
             delegate (IList<string> fileLines, int index, bool insideContainer)
             {
@@ -31,58 +29,68 @@ public class Tools
                     int tabsNum = GetLineTabsNumber(fileLines[index]);
 
                     fileLines[index] = String.Concat(
-                                    fileLines[index].Substring(0, tabsNum - 1),
-                                    newLine);
+                        fileLines[index].Substring(0, tabsNum - 1),
+                        newLine);
                 }
             }
         );
     }
 
-    public static void AddLineInFile(string filePath, string[] containers,
-                                     string line)
+    public static void AddLinesInFile(string filePath, string[] containers,
+                                     string[] lines)
     {
         IterateOverLinesAndContainers(
             filePath,
             new List<string>(ReadFileToArray(filePath)),
             containers,
-            "",
-            line,
             delegate (IList<string> fileLines, int index)
             {
-                int tabsNum = GetLineTabsNumber(fileLines[index]);
-                for (int j = 0; j < tabsNum + 1; j++)
+                foreach (string line in lines)
                 {
-                    line = String.Concat("\t", line);
+                    int tabsNum = GetLineTabsNumber(fileLines[index]);
+                    string addLine = String.Copy(line);
+                    
+                    for (int j = 0; j < tabsNum + 1; j++)
+                    {
+                        addLine = String.Concat("\t", addLine);
+                    }
+                    
+                    fileLines.Insert(index + 1, addLine);
                 }
-
-                fileLines.Insert(index + 1, line);
             },
             delegate (IList<string> fileLines, int index, bool isInsCont) { }
         );
     }
 
     public static void RemoveLineInFileWithSpecString(string filePath, 
-                                                      string checker)
+                                                      string[] checkers)
     {
         List<string> fileLines = new List<string>(ReadFileToArray(filePath));
 
-        fileLines.RemoveAll(str => str.Contains(checker));
+        fileLines.RemoveAll(
+            delegate(string line) 
+            {
+                foreach(string checker in checkers)
+                {
+                    if (line.Contains(checker))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        );
 
         WriteToFile(filePath, fileLines.ToArray());
     }
 
-    private static void IterateOverLinesAndContainers(string filePath,
-                                               IList<string> fileList,
-                                               string[] containers,
-                                               string currentFileLine,
-                                               
-                                                      string newLine,
-                                               Action<IList<string>, int> 
-                                                      doInsideCont,
-                                               Action<IList<string>, int, bool> 
-                                                      doPerLine
-                                              )
-    {
+    private static void IterateOverLinesAndContainers(
+        string filePath,
+        IList<string> fileList,
+        string[] containers,
+        Action<IList<string>, int> doInsideCont,
+        Action<IList<string>, int, bool> doPerLine
+    ) {
         const string endContString = "}";
         bool insideContainer = false;
 
@@ -117,7 +125,7 @@ public class Tools
         // only exists one 'command / definition' per line)
         int tabsNum = 0;
         while (Char.IsWhiteSpace(line[tabsNum++])) { }
-        return tabsNum;
+        return tabsNum - 1;
     }
 
     public static string[] ReadFileToArray(string filePath)

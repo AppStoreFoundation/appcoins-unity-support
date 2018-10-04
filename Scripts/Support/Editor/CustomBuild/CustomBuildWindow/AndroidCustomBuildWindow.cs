@@ -303,13 +303,13 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
         else
         {
             gradlePath = EditorPrefs.GetString(
-            "appcoins_gradle_path",
-            SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows ?
-            "C:\\Program Files\\Android\\Android Studio\\gradle\\" +
-                "gradle-4.4\\bin\\gradle" :
-            "/Applications/Android Studio.app/Contents/gradle/gradle-4.4/" +
-                "bin/"
-         );
+                "appcoins_gradle_path",
+                SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows ?
+                "C:\\Program Files\\Android\\Android Studio\\gradle\\" +
+                    "gradle-4.4\\bin\\gradle" :
+                "/Applications/Android Studio.app/Contents/gradle/gradle-4.4/" +
+                    "bin/"
+            );
 
             adbPath = EditorPrefs.GetString(
                 "appcoins_adb_path",

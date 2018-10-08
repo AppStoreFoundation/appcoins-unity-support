@@ -196,7 +196,11 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             instance.Close();
         }
 
-        if (gradlePath != "" &&
+        bool invalidReleaseBuild = (buildRelease && (PlayerSettings.keyaliasPass == "" || PlayerSettings.keystorePass == ""));
+        if (!buildRelease)
+            invalidReleaseBuild = false;
+        
+        if (gradlePath != "" && !invalidReleaseBuild &&
             GUI.Button(
                 new Rect(
                     xEnd - buttonWidth - xDelta,
@@ -226,6 +230,16 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             SetCustomBuildPrefs();
             instance.Close();
             instance.unityEvent.Invoke(lastBuildSatage);
+        }
+
+        //KEYSIGN CHECK
+        //If release mode is enabled and password not provided display a warning
+        if (invalidReleaseBuild) {
+            GUIStyle style = GUIStyle.none;
+            style.normal.textColor = Color.red;
+            GUI.Label(new Rect(5, yEnd - buttonHeight - yDelta * 2 - 20, xEnd - xDelta, 20),
+                      "WARNING: Keystore password and/or keyalias password are empty!",
+                      style);            
         }
     }
 

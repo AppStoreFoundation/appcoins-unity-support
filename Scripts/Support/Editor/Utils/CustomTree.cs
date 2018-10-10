@@ -73,7 +73,10 @@ public class Node<T>
     // Get child by index
     public Node<T> GetChild(int index)
     {
-        return _childs[index];
+        if (_childs.Count > index)
+            return _childs[index];
+        else
+            return null;
     }
 
     public int GetChildsCount()
@@ -84,7 +87,8 @@ public class Node<T>
     // Change child by index at childs list
     public void SetChild(int index, Node<T> newChild)
     {
-        _childs[index] = newChild;
+        if (_childs.Count > index)
+            _childs[index] = newChild;
     }
 
     public int GetDepth()
@@ -447,7 +451,11 @@ public class Tree<T>
     // node is removed from the 'path' list.
     private Node<T> FindPath(List<Node<T>> path, ref int pathIndex)
     {
-        Node<T> nodeToFind = path[++pathIndex];
+        pathIndex = pathIndex + 1;
+        if (path.Count <= pathIndex)
+            return _root;
+        
+        Node<T> nodeToFind = path[pathIndex];
         Node<T> currentTreeNode = _root;
 
         while(true)

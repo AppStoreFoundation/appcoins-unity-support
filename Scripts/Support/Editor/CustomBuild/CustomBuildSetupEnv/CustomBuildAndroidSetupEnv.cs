@@ -5,6 +5,7 @@ using System;
 
 public class CustomBuildAndroidSetupEnv : CustomBuildSetupEnv
 {
+    private const string SAMPLE_BUNDLE_ID = "com.appcoins.sample";
     private const string defaultUnityPackage = "com.Company.ProductName";
     private static string appcoinsMainTemplate = Application.dataPath +
                                                             "/AppcoinsUnity/" +
@@ -59,7 +60,7 @@ public class CustomBuildAndroidSetupEnv : CustomBuildSetupEnv
         if (PlayerSettings.applicationIdentifier.Equals(defaultUnityPackage))
         {
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, 
-                                                    "com.aptoide.appcoins");
+                                                    SAMPLE_BUNDLE_ID);
         }
 
         // Export Project with gradle format (template)

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class AppcoinsGameObject
+public abstract class AppcoinsGameObject : MonoBehaviour
 {
     protected readonly string mainTemplatePath = Application.dataPath +
                                                  "/Plugins/Android/" +

@@ -241,27 +241,28 @@ public class Tools
     internal static void MergeMainTemplates(string baseFilePath, 
                                      string fileToMergePath)
     {
-        if (File.Exists(baseFilePath))
-        {
-            if (PerformAutomaticMerge(baseFilePath))
-            {
-                Tree<string> tCurrent = Tree<string>.CreateTreeFromFile(
-                    baseFilePath, FileParser.BUILD_GRADLE
-                );
+        //TODO FIX MERGE
+        //if (File.Exists(baseFilePath))
+        //{
+        //    if (PerformAutomaticMerge(baseFilePath))
+        //    {
+        //        Tree<string> tCurrent = Tree<string>.CreateTreeFromFile(
+        //            baseFilePath, FileParser.BUILD_GRADLE
+        //        );
                 
-                Tree<string> tAppcoins = Tree<string>.CreateTreeFromFile(
-                    fileToMergePath, FileParser.BUILD_GRADLE
-                );
+        //        Tree<string> tAppcoins = Tree<string>.CreateTreeFromFile(
+        //            fileToMergePath, FileParser.BUILD_GRADLE
+        //        );
                 
-                tCurrent.MergeTrees(tAppcoins);
-                Tree<string>.CreateFileFromTree(tCurrent, 
-                                                baseFilePath, 
-                                                false, 
-                                                FileParser.BUILD_GRADLE);
-            }
-        }
+        //        tCurrent.MergeTrees(tAppcoins);
+        //        Tree<string>.CreateFileFromTree(tCurrent, 
+        //                                        baseFilePath, 
+        //                                        false, 
+        //                                        FileParser.BUILD_GRADLE);
+        //    }
+        //}
 
-        else
+        //else
         {
             File.Copy(fileToMergePath, baseFilePath, true);
         }

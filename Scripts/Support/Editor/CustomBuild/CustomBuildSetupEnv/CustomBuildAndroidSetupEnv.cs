@@ -69,6 +69,6 @@ public class CustomBuildAndroidSetupEnv : CustomBuildSetupEnv
 
         //Make sure all non relevant errors go away
         UnityEngine.Debug.ClearDeveloperConsole();
-        UnityEngine.Debug.Log("Successfully integrated Appcoins Unity plugin!");
+        UnityEngine.Debug.Log("Successfully integrated Appcoins Unity plugin! :)");
     }
 }

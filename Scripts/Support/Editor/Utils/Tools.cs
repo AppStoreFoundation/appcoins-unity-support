@@ -241,6 +241,8 @@ public class Tools
     internal static void MergeMainTemplates(string baseFilePath, 
                                      string fileToMergePath)
     {
+        UnityEngine.Debug.Log("Copying mainTemplate.gradle");
+
         //TODO FIX MERGE
         //if (File.Exists(baseFilePath))
         //{

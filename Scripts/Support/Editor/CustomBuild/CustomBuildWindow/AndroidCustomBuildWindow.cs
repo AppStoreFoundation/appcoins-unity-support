@@ -123,12 +123,16 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         int scenesLength = EditorBuildSettings.scenes.Length;
 
+
         // Add open scenes in the hierarchy window if build settings scenes list
         // have none
         if (instance.buildScenesEnabled.Length == 0)
         {
             instance.selector.AddAllOpenScenesToBuildSettings();
         }
+
+ 
+        instance.selector.CheckFirstScene();
 
         // Get enabled scenes at build settings scenes
         instance.buildScenesEnabled =

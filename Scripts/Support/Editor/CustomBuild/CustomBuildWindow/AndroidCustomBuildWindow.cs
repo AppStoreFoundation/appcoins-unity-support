@@ -152,7 +152,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             instance.buildScenesEnabled[i] = GUI.Toggle(
                 new Rect(10, 10 + i * 20, xEnd - xEnd / 10, 20),
                 instance.buildScenesEnabled[i],
-                EditorBuildSettings.scenes[i].path
+                EditorBuildSettings.scenes[i].path 
             );
         }
         GUI.EndScrollView();
@@ -373,8 +373,12 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             //In case Android Studio is not Installed
             //User is asked to fill gradle path manually
             Debug.Log("Android studio directory is non existing");
-            gradlePath = EditorPrefs.GetString(
-              "appcoins_gradle_path", "Gradle path not found. Insert directory manually!");
+
+            EditorPrefs.DeleteKey("appcoins_gradle_path");
+            //Invoke(WarningPopup(),1.0f);
+            WarningPopup();
+            gradlePath = EditorPrefs.GetString("appcoins_gradle_path", "Gradle Path not found.Please fill it manually!");
+
 
             adbPath = EditorPrefs.GetString(
                "appcoins_adb_path",
@@ -428,5 +432,10 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             return true;
         }
         return false;
+    }
+
+    public void WarningPopup(){
+
+        EditorUtility.DisplayDialog("Warning", "Gradle Path not found. Please fill it manually!", "Close");
     }
 }

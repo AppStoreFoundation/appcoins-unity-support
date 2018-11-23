@@ -7,13 +7,19 @@ public class SelectScenes
 {
     public bool[] buildScenesEnabled;
 
+    private readonly static string _NAME_SCENE_SAMPLE = "SampleScene.unity";
+
+    private readonly static int _INDEX_FIRST_SCENE = 0;
+
+    private readonly static int _NUMBER_OF_SCENES = 1;
+
     public string[] ScenesToString()
     {
         ArrayList pathScenes = new ArrayList();
 
-        for(int i = 0; i < EditorBuildSettings.scenes.Length; i++)
+        for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
         {
-            if(EditorBuildSettings.scenes[i].enabled)
+            if (EditorBuildSettings.scenes[i].enabled)
             {
                 pathScenes.Add(EditorBuildSettings.scenes[i].path);
             }
@@ -27,12 +33,12 @@ public class SelectScenes
         int sceneCount = UnityEngine.SceneManagement.SceneManager.sceneCount;
         SceneToExport[] scenes = new SceneToExport[sceneCount];
 
-        for(int i = 0; i < sceneCount; i++)
+        for (int i = 0; i < sceneCount; i++)
         {
-            UnityEngine.SceneManagement.Scene scene = 
+            UnityEngine.SceneManagement.Scene scene =
                 UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
 
-            if(scenes[i] == null)
+            if (scenes[i] == null)
             {
                 scenes[i] = new SceneToExport();
             }
@@ -48,12 +54,12 @@ public class SelectScenes
     {
         SceneToExport[] scenes = GetAllOpenScenes();
 
-        EditorBuildSettingsScene[] buildScenes = 
+        EditorBuildSettingsScene[] buildScenes =
             new EditorBuildSettingsScene[scenes.Length];
 
-        for(int i = 0; i < scenes.Length; i++)
+        for (int i = 0; i < scenes.Length; i++)
         {
-            buildScenes[i] = new EditorBuildSettingsScene(scenes[i].scene.path, 
+            buildScenes[i] = new EditorBuildSettingsScene(scenes[i].scene.path,
                                                           true);
         }
 
@@ -65,9 +71,9 @@ public class SelectScenes
     public bool[] GetBuildSettingsScenesEnabled()
     {
         bool[] scenesEnabled = new bool[EditorBuildSettings.scenes.Length];
-        EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
+        EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
 
-        for(int i = 0; i < scenes.Length; i++)
+        for (int i = 0; i < scenes.Length; i++)
         {
             scenesEnabled[i] = scenes[i].enabled;
         }
@@ -77,12 +83,12 @@ public class SelectScenes
 
     public void UpdatedBuildScenes(bool[] enabledScenes)
     {
-        EditorBuildSettingsScene[] newBuildScenes = 
+        EditorBuildSettingsScene[] newBuildScenes =
             new EditorBuildSettingsScene[enabledScenes.Length];
 
-        for(int i = 0; i < enabledScenes.Length; i++)
+        for (int i = 0; i < enabledScenes.Length; i++)
         {
-            newBuildScenes[i] = 
+            newBuildScenes[i] =
                 new EditorBuildSettingsScene(EditorBuildSettings.scenes[i].path,
                                              enabledScenes[i]);
         }
@@ -91,6 +97,41 @@ public class SelectScenes
         {
             EditorBuildSettings.scenes = newBuildScenes;
         }
+    }
+
+    /*
+     * Checks if the user has only one scene added and if is the 
+     * SampleScene and if another scene is open adds to the Build the open scene
+     */
+    public void CheckFirstScene()
+    {
+        if (_GetSceneCountInBuildSettings() == _NUMBER_OF_SCENES)
+        {
+            if (_ContainsSampleScene(_INDEX_FIRST_SCENE))
+            {
+                string currentSceneName = _GetCurrentSceneName();
+                if (!currentSceneName.Equals(_NAME_SCENE_SAMPLE))
+                {
+                    AddAllOpenScenesToBuildSettings();
+                }
+            }
+        }
+    }
+
+    private int _GetSceneCountInBuildSettings()
+    {
+        return UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings;
+    }
+
+    private bool _ContainsSampleScene(int sceneNumber)
+    {
+        EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
+        return scenes.Length > 0 ? scenes[sceneNumber].path.Contains(_NAME_SCENE_SAMPLE) : false;
+    }
+
+    private string _GetCurrentSceneName()
+    {
+        return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
     }
 
 }

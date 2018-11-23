@@ -105,7 +105,7 @@ public class SelectScenes
      */
     public void CheckFirstScene()
     {
-        if (_GetSceneCount() == _NUMBER_OF_SCENES)
+        if (_GetSceneCountInBuildSettings() == _NUMBER_OF_SCENES)
         {
             if (_ContainsSampleScene(_INDEX_FIRST_SCENE))
             {
@@ -118,9 +118,9 @@ public class SelectScenes
         }
     }
 
-    private int _GetSceneCount()
+    private int _GetSceneCountInBuildSettings()
     {
-        return UnityEngine.SceneManagement.SceneManager.sceneCount;
+        return UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings;
     }
 
     private bool _ContainsSampleScene(int sceneNumber)

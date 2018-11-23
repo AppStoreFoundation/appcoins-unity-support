@@ -8,7 +8,7 @@ mkdir -p ../bds-unity-dll/dependencies/2017/
 mkdir -p ../asf-unity-dll/dependencies/2017/
 cp ./appcoins-unity-support-2018/bin/Debug/AppCoinsUnitySupport.dll ../bds-unity-dll/dependencies/2017/
 cp ./appcoins-unity-support-2018/bin/Debug/AppCoinsUnitySupport.dll ../asf-unity-dll/dependencies/2017/
-cp ./appcoins-unity-support-2018/bin/Debug/AppCoinsUnitySupport.dll ../bds-unity-plugin-2017/AppcoinsUnityPlugin/Assets/AppcoinsUnity/Scripts/Editor/AppCoinsUnitySupport.dll
+cp ./appcoins-unity-support-2018/bin/Debug/AppCoinsUnitySupport.dll ../bds-unity-plugin-2017/AppcoinsUnityPlugin/Assets/AppcoinsUnity/Scripts/Editor/
 
 
 mkdir -p ../bds-unity-dll/dependencies/2018/

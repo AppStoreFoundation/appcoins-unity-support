@@ -163,7 +163,7 @@ public class CustomBuild
     private void BuildSuccess()
     {
         EditorUtility.DisplayDialog("Custom Build", "Custom Build completed " +
-                                    "whitout any errors.", "OK");
+                                    "without any errors.", "OK");
     }
 
     #region State Handling

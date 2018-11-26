@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections;
+using System.Timers;
 
 // Draw the window for the user select what scenes he wants to export
 // and configure player settings.
@@ -21,7 +22,8 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     private bool runAdbRun;
     private BuildStage lastBuildSatage;
     private string windowsPath = "C:\\Program Files\\Android\\Android Studio\\gradle";
-    private string macPath = "/Applications/Android Studio.app/Contentss/gradle";
+    private string macPath = "/Applications/Android Studio.app/Contents/gradle";
+    private string devPath;
     private string gradVersion;
 
     private string defaultGradleMem = "1536";
@@ -152,7 +154,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             instance.buildScenesEnabled[i] = GUI.Toggle(
                 new Rect(10, 10 + i * 20, xEnd - xEnd / 10, 20),
                 instance.buildScenesEnabled[i],
-                EditorBuildSettings.scenes[i].path 
+                EditorBuildSettings.scenes[i].path
             );
         }
         GUI.EndScrollView();
@@ -303,12 +305,12 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
         if (ExistsAndroidPath(SystemInfo.operatingSystemFamily ==
                               OperatingSystemFamily.Windows ? windowsPath : macPath))
         {
-            EditorPrefs.DeleteKey("appcoins_gradle_path");
-
-            // Debug.Log(EditorSkin.get)
+          
+            //Print console message to help developer keep track of process
             Debug.Log("Android studio directory exists");
 
-            GetGradleVersion(macPath);
+            GetGradleVersion(devPath);
+
             // If package name is different we assume that the user is working in 
             // a different unity project
             if (!Application.identifier.Equals(packageName))
@@ -369,14 +371,14 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         else
         {
-
             //In case Android Studio is not Installed
             //User is asked to fill gradle path manually
+            WarningPopup();
+
+            //Print console message to help developer keep track of process
             Debug.Log("Android studio directory is non existing");
 
-            EditorPrefs.DeleteKey("appcoins_gradle_path");
-            //Invoke(WarningPopup(),1.0f);
-            WarningPopup();
+
             gradlePath = EditorPrefs.GetString("appcoins_gradle_path", "Gradle Path not found.Please fill it manually!");
 
 
@@ -408,33 +410,37 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
     // Process a directory 
     // and the subdirectories it contains.
-    public void GetGradleVersion(string targetDirectory)
+    protected void GetGradleVersion(string targetDirectory)
     {
 
         // Recurse into subdirectories of this directory.
         string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
         foreach (string subdirectory in subdirectoryEntries)
-     
-            if(subdirectory.Contains("gradle-")){
+
+            if (subdirectory.Contains("gradle-"))
+            {
                 string[] vers = subdirectory.Split('-');
                 gradVersion = "gradle-" + vers[1];
                 Debug.Log("This is the gradVersion" + "\n" + gradVersion);
-        }
+            }
 
 
     }
 
-
-    public bool ExistsAndroidPath(string path1)
+    //Check if android is installed either on mac or windows
+    protected bool ExistsAndroidPath(string path1)
     {
         if (Directory.Exists(path1))
         {
+            devPath = path1;
             return true;
         }
         return false;
     }
 
-    public void WarningPopup(){
+    //Display warning popup window if graddle path is not found
+    protected void WarningPopup()
+    {
 
         EditorUtility.DisplayDialog("Warning", "Gradle Path not found. Please fill it manually!", "Close");
     }

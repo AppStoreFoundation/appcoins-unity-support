@@ -21,10 +21,9 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     private string mainActivityPath;
     private bool runAdbRun;
     private BuildStage lastBuildSatage;
-    private string windowsPath = "C:\\Program Files\\Android\\Android Studio\\gradle";
-    private string macPath = "/Applications/Android Studio.app/Contents/gradle";
+    private string windowsPath = "C:\\Program Files\\Android\\Android Studio\\gradle\\";
+    private string macPath = "/Applications/Android Studio.app/Contents/gradle/";
     private string devPath;
-    private string gradVersion;
 
     private string defaultGradleMem = "1536";
     private string defaultDexMem = "1024";
@@ -309,7 +308,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             //Print console message to help developer keep track of process
             Debug.Log("Android studio directory exists");
 
-            GetGradleVersion(devPath);
+            string gradleVersion = GetGradleVersion(devPath);
 
             // If package name is different we assume that the user is working in 
             // a different unity project
@@ -317,8 +316,8 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             {
                 gradlePath = SystemInfo.operatingSystemFamily ==
                                        OperatingSystemFamily.Windows ?
-                "C:\\Program Files\\Android\\Android Studio\\gradle\\" + gradVersion + "\\bin\\gradle" :
-                "/Applications/Android Studio.app/Contents/gradle/" + gradVersion +
+                                       windowsPath + gradleVersion + "\\bin\\gradle" :
+                                       macPath + gradleVersion +
                     "/bin/";
 
                 adbPath = EditorPrefs.GetString("AndroidSdkRoot") +
@@ -339,8 +338,8 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 gradlePath = EditorPrefs.GetString(
                   "appcoins_gradle_path",
                     SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows ?
-                    "C:\\Program Files\\Android\\Android Studio\\gradle\\" + gradVersion + "\\bin\\gradle" :
-                    "/Applications/Android Studio.app/Contents/gradle/" + gradVersion +
+                    windowsPath + gradleVersion + "\\bin\\gradle" :
+                    macPath + gradleVersion +
                             "/bin/"
                 );
 
@@ -378,15 +377,13 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             //Print console message to help developer keep track of process
             Debug.Log("Android studio directory is non existing");
 
-
-            gradlePath = EditorPrefs.GetString("appcoins_gradle_path", "Gradle Path not found.Please fill it manually!");
-
+            gradlePath = "Gradle Path not found.Please fill it manually!";
 
             adbPath = EditorPrefs.GetString(
                "appcoins_adb_path",
                 EditorPrefs.GetString("AndroidSdkRoot") +
                       "/platform-tools/adb"
-        );
+            );
 
             mainActivityPath = EditorPrefs.GetString(
                 "appcoins_main_activity_path",
@@ -409,9 +406,11 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     }
 
     // Process a directory 
-    // and the subdirectories it contains.
-    protected void GetGradleVersion(string targetDirectory)
+    // and the subdirectories it contains searching for the gradle folder to get its version
+    // Throws an error and returns NOT_FOUND string if not found
+    protected string GetGradleVersion(string targetDirectory)
     {
+        string gradleVersion = "NOT_FOUND";
 
         // Recurse into subdirectories of this directory.
         string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
@@ -420,11 +419,15 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             if (subdirectory.Contains("gradle-"))
             {
                 string[] vers = subdirectory.Split('-');
-                gradVersion = "gradle-" + vers[1];
-                Debug.Log("This is the gradVersion" + "\n" + gradVersion);
+                gradleVersion = "gradle-" + vers[1];
+                Debug.Log("This is the gradVersion" + "\n" + gradleVersion);
+                return gradleVersion;
             }
 
 
+        Debug.LogError("Unable to determine gradle version");
+
+        return gradleVersion;
     }
 
     //Check if android is installed either on mac or windows

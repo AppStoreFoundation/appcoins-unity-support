@@ -2,8 +2,11 @@ using UnityEngine;
 using UnityEditor;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
+
 
 public class Tools
 {
@@ -12,7 +15,7 @@ public class Tools
 
     // Change a line in a file as much times as specified. 
     // file has the same format as a .gradle file
-    public static void ChangeLineInFile(string filePath, 
+    public static void ChangeLineInFile(string filePath,
                                         string fileLine,
                                         string[] containers,
                                         string newLine
@@ -20,7 +23,7 @@ public class Tools
     {
         IterateOverLinesAndContainers(
             filePath, ReadFileToArray(filePath),
-            containers, 
+            containers,
             delegate (IList<string> fileLines, int index) { },
             delegate (IList<string> fileLines, int index, bool insideContainer)
             {
@@ -49,12 +52,12 @@ public class Tools
                 {
                     int tabsNum = GetLineTabsNumber(fileLines[index]);
                     string addLine = String.Copy(line);
-                    
+
                     for (int j = 0; j < tabsNum + 1; j++)
                     {
                         addLine = String.Concat("\t", addLine);
                     }
-                    
+
                     fileLines.Insert(index + 1, addLine);
                 }
             },
@@ -62,15 +65,15 @@ public class Tools
         );
     }
 
-    public static void RemoveLineInFileWithSpecString(string filePath, 
+    public static void RemoveLineInFileWithSpecString(string filePath,
                                                       string[] checkers)
     {
         List<string> fileLines = new List<string>(ReadFileToArray(filePath));
 
         fileLines.RemoveAll(
-            delegate(string line) 
+            delegate (string line)
             {
-                foreach(string checker in checkers)
+                foreach (string checker in checkers)
                 {
                     if (line.Contains(checker))
                     {
@@ -90,7 +93,8 @@ public class Tools
         string[] containers,
         Action<IList<string>, int> doInsideCont,
         Action<IList<string>, int, bool> doPerLine
-    ) {
+    )
+    {
         const string endContString = "}";
         bool insideContainer = false;
 
@@ -134,7 +138,7 @@ public class Tools
         List<string> lines = new List<string>();
 
         string line;
-        while((line = fileReader.ReadLine()) != null)
+        while ((line = fileReader.ReadLine()) != null)
         {
             lines.Add(line);
         }
@@ -153,7 +157,7 @@ public class Tools
         Write(new StreamWriter(filePath, true), lines);
     }
 
-    private static void Write(StreamWriter fileWriter, 
+    private static void Write(StreamWriter fileWriter,
                               string[] lines)
     {
         foreach (string line in lines)
@@ -184,7 +188,7 @@ public class Tools
     }
 
     // If folder already exists in the chosen directory delete it.
-    public static void DeleteIfFolderAlreadyExists(string path, 
+    public static void DeleteIfFolderAlreadyExists(string path,
                                                    string folderName)
     {
         string[] folders = Directory.GetDirectories(path);
@@ -238,33 +242,28 @@ public class Tools
         return path;
     }
 
-    internal static void MergeMainTemplates(string baseFilePath, 
+    internal static void MergeMainTemplates(string baseFilePath,
                                      string fileToMergePath)
     {
         UnityEngine.Debug.Log("Copying mainTemplate.gradle");
 
-        //TODO FIX MERGE
-        //if (File.Exists(baseFilePath))
-        //{
-        //    if (PerformAutomaticMerge(baseFilePath))
-        //    {
-        //        Tree<string> tCurrent = Tree<string>.CreateTreeFromFile(
-        //            baseFilePath, FileParser.BUILD_GRADLE
-        //        );
-                
-        //        Tree<string> tAppcoins = Tree<string>.CreateTreeFromFile(
-        //            fileToMergePath, FileParser.BUILD_GRADLE
-        //        );
-                
-        //        tCurrent.MergeTrees(tAppcoins);
-        //        Tree<string>.CreateFileFromTree(tCurrent, 
-        //                                        baseFilePath, 
-        //                                        false, 
-        //                                        FileParser.BUILD_GRADLE);
-        //    }
-        //}
+        if (File.Exists(baseFilePath))
+        {
+            if (PerformAutomaticMerge(baseFilePath))
+            {
+                Tree<string> tCurrent = Tree<string>.CreateTreeFromFile(baseFilePath, FileParser.BUILD_GRADLE);
 
-        //else
+                Tree<string> tAppcoins = Tree<string>.CreateTreeFromFile(fileToMergePath, FileParser.BUILD_GRADLE);
+
+                tCurrent.MergeTrees(tAppcoins);
+
+                Tree<string>.CreateFileFromTree(tCurrent,
+                                                baseFilePath,
+                                                  false,
+                                                  FileParser.BUILD_GRADLE);
+            }
+        }
+        else
         {
             File.Copy(fileToMergePath, baseFilePath, true);
         }
@@ -276,7 +275,7 @@ public class Tools
 
         string[] fileLines = ReadFileToArray(filePath);
 
-        foreach(string line in fileLines)
+        foreach (string line in fileLines)
         {
             if (line.Contains(checker))
             {

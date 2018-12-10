@@ -118,6 +118,28 @@ public class SelectScenes
         }
     }
 
+    /*
+     *  Function that checks if there are scenes enabled in the build settings
+     *  Returns true if exists enabled scenes.
+     *  Returns false if dont exist any enabled scenes.
+     */
+    public bool CheckIfThereAreScenesEnabled()
+    {
+        bool[] scenesEnabled = GetBuildSettingsScenesEnabled();
+        if (scenesEnabled.Length > 0)
+        {
+            foreach (bool enabled in scenesEnabled)
+            {
+                if (enabled)
+                {
+                    return true;
+
+                }
+            }
+        }
+        return false;
+    }
+
     private int _GetSceneCountInBuildSettings()
     {
         return UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings;

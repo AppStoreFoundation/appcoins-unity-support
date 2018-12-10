@@ -138,28 +138,36 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             instance.selector.AddAllOpenScenesToBuildSettings();
         }
 
- 
+
         instance.selector.CheckFirstScene();
 
         // Get enabled scenes at build settings scenes
         instance.buildScenesEnabled =
                     instance.selector.GetBuildSettingsScenesEnabled();
 
+
         float scrollViewLength = scenesLength * 25f;
+
         scenesPartHeight += 30;
+
+        //Using the option in beginscrollview with vertical scroll.
         scrollViewVector = GUI.BeginScrollView(
-            new Rect(5, scenesPartHeight, xEnd - xDelta, 215),
+            new Rect(5, scenesPartHeight, xEnd - xDelta, yEnd / 5),
             scrollViewVector,
             new Rect(0, 0, xEnd - xEnd / 10, scrollViewLength)
-        );
+        , false, true);
+
+
         for (int i = 0; i < scenesLength; i++)
         {
             instance.buildScenesEnabled[i] = GUI.Toggle(
-                new Rect(10, 10 + i * 20, xEnd - xEnd / 10, 20),
-                instance.buildScenesEnabled[i],
-                EditorBuildSettings.scenes[i].path
-            );
+            new Rect(10, 10 + i * 20, xEnd - xEnd / 10, 20),
+            instance.buildScenesEnabled[i],
+            EditorBuildSettings.scenes[i].path
+        );
         }
+
+
         GUI.EndScrollView();
 
         // Pass enabled scenes to SelectScenes class 
@@ -195,6 +203,9 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 instance.selector.GetBuildSettingsScenesEnabled();
         }
 
+        //Checks if there is any scene enabled
+        bool areScenesEnabled = instance.selector.CheckIfThereAreScenesEnabled();
+
         if (GUI.Button(
             new Rect(
                 xEnd - 2 * buttonWidth - 2 * xDelta,
@@ -211,7 +222,8 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
         if (!buildRelease)
             invalidReleaseBuild = false;
 
-        if (gradlePath != "" && !invalidReleaseBuild &&
+
+        if (gradlePath != "" && !invalidReleaseBuild && areScenesEnabled &&
             GUI.Button(
                 new Rect(
                     xEnd - buttonWidth - xDelta,
@@ -244,6 +256,16 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         }
 
+        //if there is no scene enabled it sends a warning
+        if (!areScenesEnabled)
+        {
+            GUIStyle style = GUIStyle.none;
+            style.normal.textColor = Color.red;
+            GUI.Label(new Rect(5, yEnd - buttonHeight - yDelta - 20, xEnd - xDelta, 20),
+                         "WARNING: No scenes selected.",
+                      style);
+        }
+
         //KEYSIGN CHECK
         //If release mode is enabled and password not provided display a warning
         if (invalidReleaseBuild)
@@ -254,6 +276,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                       "WARNING: Keystore password and/or keyalias password are empty!",
                       style);
         }
+
     }
 
     protected override void UnityExportGUI()
@@ -307,8 +330,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         if (ExistsAndroidPath(SystemInfo.operatingSystemFamily ==
                               OperatingSystemFamily.Windows ? windowsPath : macPath))
-        {
-          
+        {        
             //Print console message to help developer keep track of process
             Debug.Log("Android studio directory exists");
 

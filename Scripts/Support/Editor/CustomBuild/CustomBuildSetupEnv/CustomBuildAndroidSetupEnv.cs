@@ -20,7 +20,7 @@ public class CustomBuildAndroidSetupEnv : CustomBuildSetupEnv
 
     public CustomBuildAndroidSetupEnv(AppcoinsGameObject a) : base(a) {}
 
-    internal override void Setup()
+    public override void Setup()
     {
         // Merge main templates
         Tools.MergeMainTemplates(currentMainTemplate, appcoinsMainTemplate);

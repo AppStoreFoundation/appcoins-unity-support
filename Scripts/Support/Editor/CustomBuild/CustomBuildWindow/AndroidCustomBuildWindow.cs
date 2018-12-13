@@ -21,9 +21,10 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     private string mainActivityPath;
     private bool runAdbRun;
     private BuildStage lastBuildSatage;
-    private string windowsPath = "C:\\Program Files\\Android\\Android Studio\\gradle\\";
-    private string macPath = "/Applications/Android Studio.app/Contents/gradle/";
+    private string windowsPath = "C:\\Program Files\\Android\\";     private string macPath = "/Applications/";
+    private string androidVersion;
     private string devPath;
+    bool correctFoundGradle;
 
     private string defaultGradleMem = "1536";
     private string defaultDexMem = "1024";
@@ -211,7 +212,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
         if (!buildRelease)
             invalidReleaseBuild = false;
 
-        if (gradlePath != "" && !invalidReleaseBuild &&
+        if (gradlePath != "" && !invalidReleaseBuild && correctFoundGradle &&
             GUI.Button(
                 new Rect(
                     xEnd - buttonWidth - xDelta,
@@ -254,7 +255,11 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                       "WARNING: Keystore password and/or keyalias password are empty!",
                       style);
         }
-    }
+
+        //Gradle Path Check
+        //If gradle path isn't found successfully the confirm button is disabled
+        if (!correctFoundGradle)         {             GUIStyle style = GUIStyle.none;             style.normal.textColor = Color.red;             GUI.Label(new Rect(5, yEnd - buttonHeight - yDelta * 2 - 20, xEnd - xDelta, 20),                       "WARNING: Gradle Version is incorrect!",                       style);             if (gradlePath != "Gradle Path not found.Please fill it manually!")             {                 correctFoundGradle = true;
+            }         }      }
 
     protected override void UnityExportGUI()
     {
@@ -308,11 +313,13 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
         if (ExistsAndroidPath(SystemInfo.operatingSystemFamily ==
                               OperatingSystemFamily.Windows ? windowsPath : macPath))
         {
-          
+
+            androidVersion = GetAndroidVersion(devPath);
+
             //Print console message to help developer keep track of process
             Debug.Log("Android studio directory exists");
 
-            string gradleVersion = GetGradleVersion(devPath);
+            string gradleVersion = GetGradleVersion(devPath + androidVersion + "/contents/gradle/");
 
             // If package name is different we assume that the user is working in 
             // a different unity project
@@ -320,9 +327,9 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             {
                 gradlePath = SystemInfo.operatingSystemFamily ==
                                        OperatingSystemFamily.Windows ?
-                                       windowsPath + gradleVersion + "\\bin\\gradle" :
-                                       macPath + gradleVersion +
-                    "/bin/";
+                                       windowsPath + androidVersion + "\\gradle\\" + gradleVersion + "\\bin\\gradle" :                                        macPath + androidVersion + "/contents/gradle/" + gradleVersion +                     "/bin/";
+
+                correctFoundGradle = true;
 
                 adbPath = EditorPrefs.GetString("AndroidSdkRoot") +
                                      "/platform-tools/adb";
@@ -342,10 +349,10 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 gradlePath = EditorPrefs.GetString(
                   "appcoins_gradle_path",
                     SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows ?
-                    windowsPath + gradleVersion + "\\bin\\gradle" :
-                    macPath + gradleVersion +
-                            "/bin/"
-                );
+                    windowsPath + androidVersion + "\\gradle\\" + gradleVersion + "\\bin\\gradle" :                     macPath + androidVersion + "/contents/gradle/" + gradleVersion +
+                        "/bin/"
+                ); 
+                correctFoundGradle = true;
 
                 adbPath = EditorPrefs.GetString(
                     "appcoins_adb_path",
@@ -377,6 +384,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             //In case Android Studio is not Installed
             //User is asked to fill gradle path manually
             WarningPopup();
+            correctFoundGradle = false;
 
             //Print console message to help developer keep track of process
             Debug.Log("Android studio directory is non existing");
@@ -408,6 +416,14 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         }
     }
+
+    // Process a directory 
+    // and the subdirectories it contains searching for the Android app folder to get its version
+    // Throws an error and returns NOT_FOUND string if not found
+    protected string GetAndroidVersion(string targetDirectory)     {         androidVersion = "NOT_FOUND";          // Recurse into subdirectories of this directory.         string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);         foreach (string subdirectory in subdirectoryEntries)             if (subdirectory.Contains("Android Studio"))             {                 string[] vers = SystemInfo.operatingSystemFamily ==                                           OperatingSystemFamily.Windows ? subdirectory.Split(new string[] { "//" }, StringSplitOptions.None)                                           : subdirectory.Split('/');                 
+                androidVersion = SystemInfo.operatingSystemFamily ==
+                                           OperatingSystemFamily.Windows ? vers[3] : vers[2];                 
+                Debug.Log("This is the Android Version" + "\n" + androidVersion);                 return androidVersion;              }          Debug.LogError("Unable to determine android version");          return androidVersion;     }
 
     // Process a directory 
     // and the subdirectories it contains searching for the gradle folder to get its version

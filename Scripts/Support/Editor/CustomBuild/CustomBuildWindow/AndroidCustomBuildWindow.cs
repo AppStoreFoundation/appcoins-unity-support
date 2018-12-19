@@ -67,7 +67,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "automatically."
         );
 
-        gradlePartHeight += 21;
+        gradlePartHeight += 22;
         unityDevelopmentBuild = EditorUserBuildSettings.development;
         unityDevelopmentBuild = GUI.Toggle(
             new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
@@ -75,7 +75,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "Unity Development Build"
         );
 
-        gradlePartHeight += 20;
+        gradlePartHeight += 25;
         GUI.Label(new Rect(5, gradlePartHeight, 105, 20), "Gradle heap size:");
         gradleMem = GUI.TextField(
             new Rect(105, gradlePartHeight, 60, 20),
@@ -93,7 +93,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                   "MB  (Gradle heap size has to be grater than Dex heap size)");
 
         // ADB
-        float adbPartHeight = gradlePartHeight + 50;
+        float adbPartHeight = gradlePartHeight + 25;
         GUI.Label(new Rect(5, adbPartHeight, xEnd - xDelta, 40), "Select the adb path:");
 
         adbPartHeight += 20;
@@ -110,7 +110,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "Install build when done?"
         );
 
-        float adbRunPartHeight = adbPartHeight + 20;
+        float adbRunPartHeight = adbPartHeight + 25;
         GUI.Label(new Rect(5, adbRunPartHeight, xEnd - xDelta, 40),
                   "Path to the main activity name " +
                   "({package name}/.UnityPlayerActivity by default)"
@@ -132,7 +132,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "Run build when done?");
 
         // SCENES
-        float scenesPartHeight = adbRunPartHeight + 40;
+        float scenesPartHeight = adbRunPartHeight + 25;
         GUI.Label(new Rect(5, scenesPartHeight, xEnd - xDelta, 40),
                   "Select what scenes you want to export:\n(Only scenes that " +
                   "are in build settings are true by default)");
@@ -166,7 +166,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             new Rect(0, 0, xEnd - xEnd / 10, scrollViewLength)
         , false, true);
 
-
+        
         for (int i = 0; i < scenesLength; i++)
         {
             instance.buildScenesEnabled[i] = GUI.Toggle(

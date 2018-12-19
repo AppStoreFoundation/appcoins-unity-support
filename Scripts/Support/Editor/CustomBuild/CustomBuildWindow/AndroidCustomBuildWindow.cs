@@ -14,6 +14,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     private string gradlePath;
     private bool buildRelease;
     private bool debugMode;
+    private bool unityDevelopmentBuild;
     private string gradleMem;
     private string dexMem;
     private string adbPath;
@@ -50,7 +51,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             HandleCopyPaste(GUIUtility.keyboardControl) ??
             gradlePath;
 
-        gradlePartHeight += 20;
+        gradlePartHeight += 22;
         buildRelease = GUI.Toggle(
                 new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
                 buildRelease,
@@ -58,7 +59,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 "Debug Version)."
         );
 
-        gradlePartHeight += 20;
+        gradlePartHeight += 22;
         debugMode = GUI.Toggle(
             new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
             debugMode,
@@ -66,7 +67,15 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "automatically."
         );
 
-        gradlePartHeight += 20;
+        gradlePartHeight += 22;
+        unityDevelopmentBuild = EditorUserBuildSettings.development;
+        unityDevelopmentBuild = GUI.Toggle(
+            new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
+            unityDevelopmentBuild,
+            "Unity Development Build"
+        );
+
+        gradlePartHeight += 25;
         GUI.Label(new Rect(5, gradlePartHeight, 105, 20), "Gradle heap size:");
         gradleMem = GUI.TextField(
             new Rect(105, gradlePartHeight, 60, 20),
@@ -84,7 +93,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                   "MB  (Gradle heap size has to be grater than Dex heap size)");
 
         // ADB
-        float adbPartHeight = gradlePartHeight + 50;
+        float adbPartHeight = gradlePartHeight + 25;
         GUI.Label(new Rect(5, adbPartHeight, xEnd - xDelta, 40), "Select the adb path:");
 
         adbPartHeight += 20;
@@ -101,7 +110,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "Install build when done?"
         );
 
-        float adbRunPartHeight = adbPartHeight + 20;
+        float adbRunPartHeight = adbPartHeight + 25;
         GUI.Label(new Rect(5, adbRunPartHeight, xEnd - xDelta, 40),
                   "Path to the main activity name " +
                   "({package name}/.UnityPlayerActivity by default)"
@@ -123,7 +132,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "Run build when done?");
 
         // SCENES
-        float scenesPartHeight = adbRunPartHeight + 40;
+        float scenesPartHeight = adbRunPartHeight + 25;
         GUI.Label(new Rect(5, scenesPartHeight, xEnd - xDelta, 40),
                   "Select what scenes you want to export:\n(Only scenes that " +
                   "are in build settings are true by default)");
@@ -157,7 +166,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             new Rect(0, 0, xEnd - xEnd / 10, scrollViewLength)
         , false, true);
 
-
+        
         for (int i = 0; i < scenesLength; i++)
         {
             instance.buildScenesEnabled[i] = GUI.Toggle(
@@ -277,6 +286,17 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                       style);
         }
 
+        if (unityDevelopmentBuild)
+        {
+            EditorUserBuildSettings.development = true;
+        }
+        else
+        {
+            EditorUserBuildSettings.development = false;
+            EditorPrefs.SetBool("unity_development_build", false);
+        }
+
+
     }
 
     protected override void UnityExportGUI()
@@ -319,6 +339,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         EditorPrefs.SetBool("appcoins_run_adb_run", runAdbRun);
         EditorPrefs.SetBool("appcoins_debug_mode", debugMode);
+        EditorPrefs.SetBool("unity_development_build", unityDevelopmentBuild);
         EditorPrefs.SetString("appcoins_gradle_mem", gradleMem);
         EditorPrefs.SetString("appcoins_dex_mem", dexMem);
 
@@ -354,6 +375,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 runAdbInstall = false;
                 runAdbRun = false;
                 debugMode = false;
+                unityDevelopmentBuild = false;
                 gradleMem = defaultGradleMem;
                 dexMem = defaultDexMem;
             }
@@ -386,6 +408,8 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 runAdbRun = EditorPrefs.GetBool("appcoins_run_adb_run", false);
 
                 debugMode = EditorPrefs.GetBool("appcoins_debug_mode", false);
+
+                unityDevelopmentBuild = EditorPrefs.GetBool("unity_development_build", false);
 
                 gradleMem = EditorPrefs.GetString("appcoins_gradle_mem",
                                                   defaultGradleMem);
@@ -422,6 +446,8 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             runAdbRun = EditorPrefs.GetBool("appcoins_run_adb_run", false);
 
             debugMode = EditorPrefs.GetBool("appcoins_debug_mode", false);
+
+            unityDevelopmentBuild = EditorPrefs.GetBool("unity_development_build", false);
 
             gradleMem = EditorPrefs.GetString("appcoins_gradle_mem",
                                               defaultGradleMem);

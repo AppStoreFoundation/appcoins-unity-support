@@ -14,6 +14,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     private string gradlePath;
     private bool buildRelease;
     private bool debugMode;
+    private bool unityDevelopmentBuild;
     private string gradleMem;
     private string dexMem;
     private string adbPath;
@@ -50,7 +51,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             HandleCopyPaste(GUIUtility.keyboardControl) ??
             gradlePath;
 
-        gradlePartHeight += 20;
+        gradlePartHeight += 22;
         buildRelease = GUI.Toggle(
                 new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
                 buildRelease,
@@ -58,12 +59,20 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 "Debug Version)."
         );
 
-        gradlePartHeight += 20;
+        gradlePartHeight += 22;
         debugMode = GUI.Toggle(
             new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
             debugMode,
             "Run gradle in debug mode? This will not end gradle terminal " +
             "automatically."
+        );
+
+        gradlePartHeight += 21;
+        unityDevelopmentBuild = EditorUserBuildSettings.development;
+        unityDevelopmentBuild = GUI.Toggle(
+            new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
+            unityDevelopmentBuild,
+            "Unity Development Build"
         );
 
         gradlePartHeight += 20;
@@ -277,6 +286,17 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                       style);
         }
 
+        if (unityDevelopmentBuild)
+        {
+            EditorUserBuildSettings.development = true;
+        }
+        else
+        {
+            EditorUserBuildSettings.development = false;
+            EditorPrefs.SetBool("unity_development_build", false);
+        }
+
+
     }
 
     protected override void UnityExportGUI()
@@ -319,6 +339,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         EditorPrefs.SetBool("appcoins_run_adb_run", runAdbRun);
         EditorPrefs.SetBool("appcoins_debug_mode", debugMode);
+        EditorPrefs.SetBool("unity_development_build", unityDevelopmentBuild);
         EditorPrefs.SetString("appcoins_gradle_mem", gradleMem);
         EditorPrefs.SetString("appcoins_dex_mem", dexMem);
 
@@ -354,6 +375,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 runAdbInstall = false;
                 runAdbRun = false;
                 debugMode = false;
+                unityDevelopmentBuild = false;
                 gradleMem = defaultGradleMem;
                 dexMem = defaultDexMem;
             }
@@ -386,6 +408,8 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 runAdbRun = EditorPrefs.GetBool("appcoins_run_adb_run", false);
 
                 debugMode = EditorPrefs.GetBool("appcoins_debug_mode", false);
+
+                unityDevelopmentBuild = EditorPrefs.GetBool("unity_development_build", false);
 
                 gradleMem = EditorPrefs.GetString("appcoins_gradle_mem",
                                                   defaultGradleMem);
@@ -422,6 +446,8 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             runAdbRun = EditorPrefs.GetBool("appcoins_run_adb_run", false);
 
             debugMode = EditorPrefs.GetBool("appcoins_debug_mode", false);
+
+            unityDevelopmentBuild = EditorPrefs.GetBool("unity_development_build", false);
 
             gradleMem = EditorPrefs.GetString("appcoins_gradle_mem",
                                               defaultGradleMem);

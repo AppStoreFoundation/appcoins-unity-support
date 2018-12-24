@@ -137,6 +137,9 @@
     <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildSetupEnv\AppcoinsGameObject\AppcoinsGameObject.cs">
       <Link>Support\Editor\CustomBuild\CustomBuildSetupEnv\AppcoinsGameObject\AppcoinsGameObject.cs</Link>
     </Compile>
+    <Compile Include="..\Scripts\Support\Editor\Utils\MigrationHelper.cs">
+      <Link>Support\Editor\Utils\MigrationHelper.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Support\Editor\CustomBuild\CustomBuildMenuItem\" />

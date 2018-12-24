@@ -66,6 +66,8 @@ public class CustomBuildAndroidSetupEnv : CustomBuildSetupEnv
         // Export Project with gradle format (template)
         EditorUserBuildSettings.androidBuildSystem = AndroidBuildSystem.Gradle;
 
+        //Make sure that older versions of the plugin dont act up
+        MigrationHelper.DeleteOlderFiles();
 
         //Make sure all non relevant errors go away
         UnityEngine.Debug.ClearDeveloperConsole();

@@ -140,6 +140,9 @@
     <Compile Include="..\Scripts\Support\Editor\Utils\MigrationHelper.cs">
       <Link>Support\Editor\Utils\MigrationHelper.cs</Link>
     </Compile>
+    <Compile Include="..\Scripts\Support\Editor\Utils\CustomAssetImportHook.cs">
+      <Link>Support\Editor\Utils\CustomAssetImportHook.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Support\Editor\CustomBuild\CustomBuildMenuItem\" />

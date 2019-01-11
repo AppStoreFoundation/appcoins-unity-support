@@ -143,9 +143,11 @@
     <Compile Include="..\Scripts\Support\Editor\Utils\CustomAssetImportHook.cs">
       <Link>Support\Editor\Utils\CustomAssetImportHook.cs</Link>
     </Compile>
+    <Compile Include="Support\Editor\CustomBuild\CustomParameterWindow\ParameterWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Support\Editor\CustomBuild\CustomBuildMenuItem\" />
+    <Folder Include="Support\Editor\CustomBuild\CustomParameterWindow\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,12 +4,18 @@ using System;
 
 public class AppcoinsSettingsWindow : EditorWindow
 {
-    string developerWalletAddress;
-    string developerBDSPublicKey;
+    string developerWalletAddress = "";
+    string developerBDSPublicKey = "";
     bool shouldLog;
     bool useUserAcquistionSDK = true;
-    bool groupEnabled;
-    //float myFloat = 1.23f;
+
+    private void Awake()
+    {
+        string storeValue = EditorPrefs.GetString(AppcoinsConstants.APPCOINS_WALLET_ADDRESS_KEY);
+        string storedValue = EditorPrefs.GetString(AppcoinsConstants.APPCOINS_PUBLIC_KEY_KEY);
+
+        //Debug.Log("stored wallet address is " + storeValue + "\n stored developer key is " + storedValue);
+    }
 
     void OnGUI()
     {
@@ -32,9 +38,8 @@ public class AppcoinsSettingsWindow : EditorWindow
 
         EditorPrefs.SetBool(AppcoinsConstants.APPCOINS_SHOULD_LOG_KEY, shouldLog);
         EditorPrefs.SetBool(AppcoinsConstants.APPCOINS_USE_UA_KEY, useUserAcquistionSDK);   
+
+        //Debug.Log("SAVED wallet address is " + developerWalletAddress + "\n SAVED developer key is " + developerBDSPublicKey);
     }
 
-    void OnValidate() {
-        UpdateValues();
-    }
 }

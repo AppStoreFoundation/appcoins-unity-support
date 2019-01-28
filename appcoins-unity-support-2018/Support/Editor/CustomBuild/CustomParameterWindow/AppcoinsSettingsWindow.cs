@@ -4,8 +4,10 @@ using System;
 
 public class AppcoinsSettingsWindow : EditorWindow
 {
-    string developerWalletAddress = "";
-    string developerBDSPublicKey = "";
+    //Default values for sample to work
+    string developerWalletAddress = "0x95cee221da20e0e02bb9c233b0055b1779a7d926";
+    //Default values for sample to work
+    string developerBDSPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyEt94j9rt0UvpkZ2jPMZZ16yUrBOtjpIQCWi/F3HN0+iwSAeEJyDw7xIKfNTEc0msm+m6ud1kJpLK3oCsK61syZ8bYQlNZkUxTaWNof1nMnbw3Xu5nuYMuowmzDqNMWg5jNooy6oxwIgVcdvbyGi5RIlxqbo2vSAwpbAAZE2HbUrysKhLME7IOrdRR8MQbSbKEy/9MtfKz0uZCJGi9h+dQb0b69H7Yo+/BN/ayBSJzOPlaqmiHK5lZsnZhK+ixpB883fr+PgSczU7qGoktqoe6Fs+nhk9bLElljCs5ZIl9/NmOSteipkbplhqLY7KwapDmhrtBgrTetmnW9PU/eCWQIDAQAB";
     bool shouldLog;
     bool useUserAcquistionSDK = true;
 

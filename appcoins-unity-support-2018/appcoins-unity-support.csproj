@@ -143,9 +143,14 @@
     <Compile Include="..\Scripts\Support\Editor\Utils\CustomAssetImportHook.cs">
       <Link>Support\Editor\Utils\CustomAssetImportHook.cs</Link>
     </Compile>
+    <Compile Include="Support\Editor\CustomBuild\CustomParameterWindow\AppcoinsSettingsWindow.cs" />
+    <Compile Include="..\Scripts\Support\Editor\AppcoinsConstants.cs">
+      <Link>Support\Editor\AppcoinsConstants.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Support\Editor\CustomBuild\CustomBuildMenuItem\" />
+    <Folder Include="Support\Editor\CustomBuild\CustomParameterWindow\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

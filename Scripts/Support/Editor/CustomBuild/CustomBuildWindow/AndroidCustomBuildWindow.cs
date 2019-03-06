@@ -1,5 +1,9 @@
 using UnityEditor;
 using UnityEngine;
+using System;
+using System.IO;
+using System.Collections;
+using System.Timers;
 
 // Draw the window for the user select what scenes he wants to export
 // and configure player settings.
@@ -10,6 +14,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     private string gradlePath;
     private bool buildRelease;
     private bool debugMode;
+    private bool unityDevelopmentBuild;
     private string gradleMem;
     private string dexMem;
     private string adbPath;
@@ -17,12 +22,15 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
     private string mainActivityPath;
     private bool runAdbRun;
     private BuildStage lastBuildSatage;
+    private string windowsPath = "C:\\Program Files\\Android\\Android Studio\\gradle\\";
+    private string macPath = "/Applications/Android Studio.app/Contents/gradle/";
+    private string devPath;
 
     private string defaultGradleMem = "1536";
     private string defaultDexMem = "1024";
-
     protected override void IdleGUI()
     {
+
         int xEnd = (int)instance.position.width;
         int xDelta = 10;
 
@@ -43,7 +51,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             HandleCopyPaste(GUIUtility.keyboardControl) ??
             gradlePath;
 
-        gradlePartHeight += 20;
+        gradlePartHeight += 22;
         buildRelease = GUI.Toggle(
                 new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
                 buildRelease,
@@ -51,7 +59,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                 "Debug Version)."
         );
 
-        gradlePartHeight += 20;
+        gradlePartHeight += 22;
         debugMode = GUI.Toggle(
             new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
             debugMode,
@@ -59,7 +67,15 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "automatically."
         );
 
-        gradlePartHeight += 20;
+        gradlePartHeight += 22;
+        unityDevelopmentBuild = EditorUserBuildSettings.development;
+        unityDevelopmentBuild = GUI.Toggle(
+            new Rect(5, gradlePartHeight, xEnd - xDelta, 20),
+            unityDevelopmentBuild,
+            "Unity Development Build"
+        );
+
+        gradlePartHeight += 25;
         GUI.Label(new Rect(5, gradlePartHeight, 105, 20), "Gradle heap size:");
         gradleMem = GUI.TextField(
             new Rect(105, gradlePartHeight, 60, 20),
@@ -77,7 +93,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
                   "MB  (Gradle heap size has to be grater than Dex heap size)");
 
         // ADB
-        float adbPartHeight = gradlePartHeight + 50;
+        float adbPartHeight = gradlePartHeight + 25;
         GUI.Label(new Rect(5, adbPartHeight, xEnd - xDelta, 40), "Select the adb path:");
 
         adbPartHeight += 20;
@@ -94,7 +110,7 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "Install build when done?"
         );
 
-        float adbRunPartHeight = adbPartHeight + 20;
+        float adbRunPartHeight = adbPartHeight + 25;
         GUI.Label(new Rect(5, adbRunPartHeight, xEnd - xDelta, 40),
                   "Path to the main activity name " +
                   "({package name}/.UnityPlayerActivity by default)"
@@ -116,12 +132,13 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             "Run build when done?");
 
         // SCENES
-        float scenesPartHeight = adbRunPartHeight + 40;
+        float scenesPartHeight = adbRunPartHeight + 25;
         GUI.Label(new Rect(5, scenesPartHeight, xEnd - xDelta, 40),
                   "Select what scenes you want to export:\n(Only scenes that " +
                   "are in build settings are true by default)");
 
         int scenesLength = EditorBuildSettings.scenes.Length;
+
 
         // Add open scenes in the hierarchy window if build settings scenes list
         // have none
@@ -130,25 +147,36 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             instance.selector.AddAllOpenScenesToBuildSettings();
         }
 
+
+        instance.selector.CheckFirstScene();
+
         // Get enabled scenes at build settings scenes
         instance.buildScenesEnabled =
                     instance.selector.GetBuildSettingsScenesEnabled();
 
+
         float scrollViewLength = scenesLength * 25f;
+
         scenesPartHeight += 30;
+
+        //Using the option in beginscrollview with vertical scroll.
         scrollViewVector = GUI.BeginScrollView(
-            new Rect(5, scenesPartHeight, xEnd - xDelta, 215),
+            new Rect(5, scenesPartHeight, xEnd - xDelta, yEnd / 5),
             scrollViewVector,
             new Rect(0, 0, xEnd - xEnd / 10, scrollViewLength)
-        );
+        , false, true);
+
+        
         for (int i = 0; i < scenesLength; i++)
         {
             instance.buildScenesEnabled[i] = GUI.Toggle(
-                new Rect(10, 10 + i * 20, xEnd - xEnd / 10, 20),
-                instance.buildScenesEnabled[i],
-                EditorBuildSettings.scenes[i].path
-            );
+            new Rect(10, 10 + i * 20, xEnd - xEnd / 10, 20),
+            instance.buildScenesEnabled[i],
+            EditorBuildSettings.scenes[i].path
+        );
         }
+
+
         GUI.EndScrollView();
 
         // Pass enabled scenes to SelectScenes class 
@@ -160,10 +188,10 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         if (GUI.Button(
             new Rect(
-                xDelta, 
-                yEnd - buttonHeight - yDelta, 
-                buttonWidth, 
-                buttonHeight), 
+                xDelta,
+                yEnd - buttonHeight - yDelta,
+                buttonWidth,
+                buttonHeight),
             "Player Settings")
            )
         {
@@ -173,36 +201,44 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
         if (GUI.Button(
             new Rect(
                 2 * xDelta + buttonWidth,
-                yEnd - buttonHeight - yDelta, 
-                buttonWidth, 
-                buttonHeight), 
+                yEnd - buttonHeight - yDelta,
+                buttonWidth,
+                buttonHeight),
             "Add Open Scenes")
            )
         {
             instance.selector.AddAllOpenScenesToBuildSettings();
-            instance.selector.buildScenesEnabled = 
+            instance.selector.buildScenesEnabled =
                 instance.selector.GetBuildSettingsScenesEnabled();
         }
 
+        //Checks if there is any scene enabled
+        bool areScenesEnabled = instance.selector.CheckIfThereAreScenesEnabled();
+
         if (GUI.Button(
             new Rect(
-                xEnd - 2 * buttonWidth -  2 * xDelta, 
-                yEnd - buttonHeight - yDelta, 
-                buttonWidth, 
-                buttonHeight), 
+                xEnd - 2 * buttonWidth - 2 * xDelta,
+                yEnd - buttonHeight - yDelta,
+                buttonWidth,
+                buttonHeight),
             "Cancel")
            )
         {
             instance.Close();
         }
 
-        if (gradlePath != "" &&
+        bool invalidReleaseBuild = (buildRelease && (PlayerSettings.keyaliasPass == "" || PlayerSettings.keystorePass == ""));
+        if (!buildRelease)
+            invalidReleaseBuild = false;
+
+
+        if (gradlePath != "" && !invalidReleaseBuild && areScenesEnabled &&
             GUI.Button(
                 new Rect(
                     xEnd - buttonWidth - xDelta,
                     yEnd - buttonHeight - yDelta,
-                    buttonWidth, 
-                    buttonHeight), 
+                    buttonWidth,
+                    buttonHeight),
                 "Confirm"
                )
            )
@@ -226,7 +262,41 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
             SetCustomBuildPrefs();
             instance.Close();
             instance.unityEvent.Invoke(lastBuildSatage);
+
         }
+
+        //if there is no scene enabled it sends a warning
+        if (!areScenesEnabled)
+        {
+            GUIStyle style = GUIStyle.none;
+            style.normal.textColor = Color.red;
+            GUI.Label(new Rect(5, yEnd - buttonHeight - yDelta - 20, xEnd - xDelta, 20),
+                         "WARNING: No scenes selected.",
+                      style);
+        }
+
+        //KEYSIGN CHECK
+        //If release mode is enabled and password not provided display a warning
+        if (invalidReleaseBuild)
+        {
+            GUIStyle style = GUIStyle.none;
+            style.normal.textColor = Color.red;
+            GUI.Label(new Rect(5, yEnd - buttonHeight - yDelta * 2 - 20, xEnd - xDelta, 20),
+                      "WARNING: Keystore password and/or keyalias password are empty!",
+                      style);
+        }
+
+        if (unityDevelopmentBuild)
+        {
+            EditorUserBuildSettings.development = true;
+        }
+        else
+        {
+            EditorUserBuildSettings.development = false;
+            EditorPrefs.SetBool("unity_development_build", false);
+        }
+
+
     }
 
     protected override void UnityExportGUI()
@@ -269,52 +339,100 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
         EditorPrefs.SetBool("appcoins_run_adb_run", runAdbRun);
         EditorPrefs.SetBool("appcoins_debug_mode", debugMode);
+        EditorPrefs.SetBool("unity_development_build", unityDevelopmentBuild);
         EditorPrefs.SetString("appcoins_gradle_mem", gradleMem);
         EditorPrefs.SetString("appcoins_dex_mem", dexMem);
+
     }
 
     protected override void LoadCustomBuildPrefs()
     {
         packageName = EditorPrefs.GetString("appcoins_package_name", "");
 
-        // If package name is different we assume that the user is working in 
-        // a different unity project
-        if (!Application.identifier.Equals(packageName))
-        {
-            gradlePath = SystemInfo.operatingSystemFamily == 
-                                   OperatingSystemFamily.Windows ?
-            "C:\\Program Files\\Android\\Android Studio\\gradle\\" +
-                "gradle-4.4\\bin\\gradle" :
-            "/Applications/Android Studio.app/Contents/gradle/gradle-4.4/" +
-                "bin/";
+        if (ExistsAndroidPath(SystemInfo.operatingSystemFamily ==
+                              OperatingSystemFamily.Windows ? windowsPath : macPath))
+        {        
+            //Print console message to help developer keep track of process
+            Debug.Log("Android studio directory exists");
 
-            adbPath = EditorPrefs.GetString("AndroidSdkRoot") +
-                                 "/platform-tools/adb";
+            string gradleVersion = GetGradleVersion(devPath);
 
-            mainActivityPath = Application.identifier + "/.UnityPlayerActivity";
-            buildRelease = false;
-            runAdbInstall = false;
-            runAdbRun = false;
-            debugMode = false;
-            gradleMem = defaultGradleMem;
-            dexMem = defaultDexMem;
+            // If package name is different we assume that the user is working in 
+            // a different unity project
+            if (!Application.identifier.Equals(packageName))
+            {
+                gradlePath = SystemInfo.operatingSystemFamily ==
+                                       OperatingSystemFamily.Windows ?
+                                       windowsPath + gradleVersion + "\\bin\\gradle" :
+                                       macPath + gradleVersion +
+                    "/bin/";
+
+                adbPath = EditorPrefs.GetString("AndroidSdkRoot") +
+                                     "/platform-tools/adb";
+
+                mainActivityPath = Application.identifier + "/.UnityPlayerActivity";
+                buildRelease = false;
+                runAdbInstall = false;
+                runAdbRun = false;
+                debugMode = false;
+                unityDevelopmentBuild = false;
+                gradleMem = defaultGradleMem;
+                dexMem = defaultDexMem;
+            }
+
+            else
+            {
+
+                gradlePath = EditorPrefs.GetString(
+                  "appcoins_gradle_path",
+                    SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows ?
+                    windowsPath + gradleVersion + "\\bin\\gradle" :
+                    macPath + gradleVersion +
+                            "/bin/"
+                );
+
+                adbPath = EditorPrefs.GetString(
+                    "appcoins_adb_path",
+                    EditorPrefs.GetString("AndroidSdkRoot") +
+                        "/platform-tools/adb"
+                );
+
+                mainActivityPath = EditorPrefs.GetString(
+                    "appcoins_main_activity_path",
+                    Application.identifier + "/.UnityPlayerActivity");
+
+                buildRelease = EditorPrefs.GetBool("appcoins_build_release", false);
+
+                runAdbInstall = EditorPrefs.GetBool("appcoins_run_adb_install", false);
+
+                runAdbRun = EditorPrefs.GetBool("appcoins_run_adb_run", false);
+
+                debugMode = EditorPrefs.GetBool("appcoins_debug_mode", false);
+
+                unityDevelopmentBuild = EditorPrefs.GetBool("unity_development_build", false);
+
+                gradleMem = EditorPrefs.GetString("appcoins_gradle_mem",
+                                                  defaultGradleMem);
+
+                dexMem = EditorPrefs.GetString("appcoins_dex_mem", defaultDexMem);
+            }
         }
 
         else
         {
-            gradlePath = EditorPrefs.GetString(
-            "appcoins_gradle_path",
-            SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows ?
-            "C:\\Program Files\\Android\\Android Studio\\gradle\\" +
-                "gradle-4.4\\bin\\gradle" :
-            "/Applications/Android Studio.app/Contents/gradle/gradle-4.4/" +
-                "bin/"
-         );
+            //In case Android Studio is not Installed
+            //User is asked to fill gradle path manually
+            WarningPopup();
+
+            //Print console message to help developer keep track of process
+            Debug.Log("Android studio directory is non existing");
+
+            gradlePath = "Gradle Path not found.Please fill it manually!";
 
             adbPath = EditorPrefs.GetString(
-                "appcoins_adb_path",
+               "appcoins_adb_path",
                 EditorPrefs.GetString("AndroidSdkRoot") +
-                    "/platform-tools/adb"
+                      "/platform-tools/adb"
             );
 
             mainActivityPath = EditorPrefs.GetString(
@@ -329,11 +447,56 @@ public class AndroidCustomBuildWindow : CustomBuildWindow
 
             debugMode = EditorPrefs.GetBool("appcoins_debug_mode", false);
 
-            gradleMem = EditorPrefs.GetString("appcoins_gradle_mem", 
+            unityDevelopmentBuild = EditorPrefs.GetBool("unity_development_build", false);
+
+            gradleMem = EditorPrefs.GetString("appcoins_gradle_mem",
                                               defaultGradleMem);
 
             dexMem = EditorPrefs.GetString("appcoins_dex_mem", defaultDexMem);
-        }
 
+        }
+    }
+
+    // Process a directory 
+    // and the subdirectories it contains searching for the gradle folder to get its version
+    // Throws an error and returns NOT_FOUND string if not found
+    protected string GetGradleVersion(string targetDirectory)
+    {
+        string gradleVersion = "NOT_FOUND";
+
+        // Recurse into subdirectories of this directory.
+        string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+        foreach (string subdirectory in subdirectoryEntries)
+
+            if (subdirectory.Contains("gradle-"))
+            {
+                string[] vers = subdirectory.Split('-');
+                gradleVersion = "gradle-" + vers[1];
+                Debug.Log("This is the gradVersion" + "\n" + gradleVersion);
+                return gradleVersion;
+            }
+
+
+        Debug.LogError("Unable to determine gradle version");
+
+        return gradleVersion;
+    }
+
+    //Check if android is installed either on mac or windows
+    protected bool ExistsAndroidPath(string path1)
+    {
+        if (Directory.Exists(path1))
+        {
+            devPath = path1;
+            return true;
+        }
+        return false;
+    }
+
+    //Display warning popup window if graddle path is not found
+    protected void WarningPopup()
+    {
+
+        EditorUtility.DisplayDialog("Warning", "Gradle Path not found. Please fill it manually!", "Close");
     }
 }

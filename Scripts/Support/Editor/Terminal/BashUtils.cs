@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System;
 
 public abstract class Terminal
 {
@@ -11,7 +12,11 @@ public abstract class Terminal
         string processLog = reader.ReadToEnd();
         reader.Close();
 
-        if (processLog.Length != 0)
+        //TODO find a better way to do this (actually checking for the word error on the output
+        bool failed = (processLog.IndexOf("error", StringComparison.OrdinalIgnoreCase) >= 0);
+        failed |= (processLog.IndexOf("failed", StringComparison.OrdinalIgnoreCase) >= 0);
+
+        if (processLog.Length != 0 && failed)
         {
             UnityEngine.Debug.LogError("CUSTOM BUILD ERROR:\n" + processLog);
             return true;

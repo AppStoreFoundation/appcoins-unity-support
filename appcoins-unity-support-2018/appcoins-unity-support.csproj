@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>unityeditor2018</RootNamespace>
     <AssemblyName>AppCoinsUnitySupport</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -137,15 +137,20 @@
     <Compile Include="..\Scripts\Support\Editor\CustomBuild\CustomBuildSetupEnv\AppcoinsGameObject\AppcoinsGameObject.cs">
       <Link>Support\Editor\CustomBuild\CustomBuildSetupEnv\AppcoinsGameObject\AppcoinsGameObject.cs</Link>
     </Compile>
-    <Compile Include="..\Scripts\Support\Editor\Utils\DisplayDialogMessageHandler.cs">
-      <Link>Support\Editor\Utils\DisplayDialogMessageHandler.cs</Link>
+    <Compile Include="..\Scripts\Support\Editor\Utils\MigrationHelper.cs">
+      <Link>Support\Editor\Utils\MigrationHelper.cs</Link>
     </Compile>
-    <Compile Include="..\Scripts\Support\Editor\Utils\MessageHandler.cs">
-      <Link>Support\Editor\Utils\MessageHandler.cs</Link>
+    <Compile Include="..\Scripts\Support\Editor\Utils\CustomAssetImportHook.cs">
+      <Link>Support\Editor\Utils\CustomAssetImportHook.cs</Link>
+    </Compile>
+    <Compile Include="Support\Editor\CustomBuild\CustomParameterWindow\AppcoinsSettingsWindow.cs" />
+    <Compile Include="..\Scripts\Support\Editor\AppcoinsConstants.cs">
+      <Link>Support\Editor\AppcoinsConstants.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Support\Editor\CustomBuild\CustomBuildMenuItem\" />
+    <Folder Include="Support\Editor\CustomBuild\CustomParameterWindow\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

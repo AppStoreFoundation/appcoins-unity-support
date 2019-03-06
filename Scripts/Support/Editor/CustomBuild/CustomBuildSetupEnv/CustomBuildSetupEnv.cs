@@ -11,7 +11,7 @@ public abstract class CustomBuildSetupEnv
         appcoinsGameObject = a;
     }
 
-    internal virtual void Setup()
+    public virtual void Setup()
     {
         try
         {

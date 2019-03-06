@@ -87,7 +87,7 @@ public abstract class CustomBuildWindow : EditorWindow
 
         else
         {
-            GUI.Label(new Rect(5, 5, 590, 50), "Unity just update...\nPlease" +
+            GUI.Label(new Rect(5, 5, 590, 50), "Unity just updated...\nPlease" +
                       " close this window and restart Custom Build process...");
         }
     }
